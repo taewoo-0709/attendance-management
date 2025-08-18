@@ -1,1 +1,82 @@
 # attendance-management
+
+## 環境構築 🔗
+
+Docker ビルド
+
+・  git@github.com:taewoo-0709/attendance-management.git<br>
+・ dataファイルはセキュリティの観念から追跡を外しています。自作してください。<br>
+・  docker-compose up -d --build
+
+＊MySQL は、OS によって起動しない場合があるのでそれぞれの PC に合わせて docker-compose.yml ファイルを編集してください。
+
+Laravel 環境構築
+
+・ docker-compose exec php bash
+
+・ composer install
+
+・ .env.example ファイルから.env を作成し、環境変数を変更
+   cp .env.example .env
+
+・ php artisan key:generate
+
+・ php artisan migrate
+
+・ php artisan db:seed
+
+### ユーザー例
+名前: テスト 太郎<br>
+メールアドレス: test@example.com<br>
+パスワード: coachtech1100
+
+※新たに会員登録する際に使用してください。
+※シーダーには別のダミーユーザーを登録済です。
+
+## メール認証機能
+mailhogを使用しています。<br>
+メール認証誘導画面の、「認証はこちら」ボタンから認証画面に遷移するため、mailhogにアクセスし、届いているメールから認証コードを確認して認証画面にコードを入力して認証完了してください。
+
+## テスト実施
+### テスト用データベースの作成・コマンド
+1. MySQLコンテナで、「demo_test」というDBを作成。<br>
+・docker-compose exec mysql bash<br>
+・mysql -u ユーザー名 -p<br>
+  例:mysql -u root -p<br>
+・パスワード + Enter (docker-compose.ymlのMYSQL_ROOT_PASSWORDで指定したパスワードです。)<br>
+  例: root + Enter<br>
+・mysql> CREATE DATABASE demo_test;<br>
+・mysql> SHOW DATABASES;<br>
+※demo_testが追加されているか確認してください。<br>
+
+2. .env.testingのAPP_KEY= にアプリケーションキーを追加<br>
+・docker-compose exec php bash<br>
+・php artisan key:generate --env=testing<br>
+
+3. php artisan config:clear
+4. php artisan migrate --env=testing
+5. php artisan test
+
+
+## ER図
+
+
+## 使用技術 🔗
+
+・PHP 8.1.33
+
+・Laravel 8.83.29
+
+・MySQL 8.0.34
+
+・nginx 1.21.1
+
+・mailhog
+
+## URL
+
+・開発環境：http://localhost/
+
+・phpMyAdmin：http://localhost:8080/
+
+・mailhog:http://localhost:8025/
