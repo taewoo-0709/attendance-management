@@ -26,12 +26,9 @@ Laravel 環境構築
 ・ php artisan db:seed
 
 ### ユーザー例
-名前: テスト 太郎<br>
-メールアドレス: test@example.com<br>
+・ 管理者
+メールアドレス: admin@example.com<br>
 パスワード: coachtech1100
-
-※新たに会員登録する際に使用してください。
-※シーダーには別のダミーユーザーを登録済です。
 
 ## メール認証機能
 mailhogを使用しています。<br>

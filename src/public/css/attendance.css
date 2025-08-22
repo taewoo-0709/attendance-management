@@ -1,0 +1,77 @@
+.alert-message {
+    padding: 10px 30px;
+    border-color: #ccc;
+    background-color: #ccc;
+    color: #000000;
+}
+
+.attendance-form {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: #f0eff2;
+  padding: 60px 30px;
+  text-align: center;
+  box-sizing: border-box;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.work-situation {
+  font-size: 16px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.work__button {
+  display: flex;
+  gap: 20px;
+}
+
+.date {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.time {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.btn {
+  font-weight: bold;
+  margin-top: 30px;
+  padding: 10px 30px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #000000;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-break {
+  font-weight: bold;
+  margin-top: 30px;
+  padding: 10px 30px;
+  font-size: 16px;
+  color: #000000;
+  background-color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.leaving-work__message {
+  font-size: 16px;
+  margin-top: 20px;
+  color: #555;
+}
+
+@media (min-width: 1400px) and (max-width: 1540px), (min-width: 768px) and (max-width: 850px) {
+  .mail-form {
+    max-width: 600px;
+  }
+}
