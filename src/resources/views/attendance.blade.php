@@ -11,11 +11,11 @@
     $dateStr = $now->format('Y-m-d (D)');
     $timeStr = $now->format('H:i:s');
 
-    $latestBreak = $attendance->breaks()->latest()->first();
+    $latestBreak = $attendance ? $attendance->breaks()->latest()->first() : null;
     $onBreak = $latestBreak && !$latestBreak->break_end_time;
   @endphp
 
-  @if(!$attendance->check_in_time)
+  @if(!$attendance || !$attendance->check_in_time)
     <div class="attendance-form">
       <div class="work-situation">
         <p class="before-work">勤務外</p>

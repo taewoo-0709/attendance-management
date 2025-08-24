@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
 
-class CustomLoginRequest extends FormRequest
+class CustomLoginRequest extends FortifyLoginRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,6 +26,7 @@ class CustomLoginRequest extends FormRequest
         return [
             'email' => 'required|email|exists:users,email',
             'password' => 'required|string|min:8',
+            'is_admin' => 'nullable|boolean'
         ];
     }
 
@@ -37,6 +38,7 @@ class CustomLoginRequest extends FormRequest
             'email.exists' => 'ログイン情報が登録されていません',
             'password.required' => 'パスワードを入力してください',
             'password.min' => 'パスワードは8文字以上で入力してください',
+            'is_admin.boolean' => '管理者の権限が必要です',
         ];
     }
 }

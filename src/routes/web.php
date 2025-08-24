@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\EmailCodeController;
 use App\Notifications\CodeVerifyNotification;
@@ -26,11 +27,19 @@ Route::get('/verify-code', [EmailCodeController::class, 'showForm'])
 Route::post('/verify-code', [EmailCodeController::class, 'verifyCode'])
     ->name('verification.code.submit');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/attendance', [StaffController::class, 'index'])
-        ->name('attendance')
-        ->middleware(['can:isStaff', 'verified']);
+Route::post('/logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/login');
+})->name('logout');
+
+Route::middleware(['auth', 'can:isStaff', 'verified'])->group(function () {
+    Route::get('/attendance', [StaffController::class, 'index'])->name('attendance');
+    Route::post('/attendance', [StaffController::class, 'update'])->name('attendance.update');
+});
+
+Route::middleware(['auth', 'can:isAdmin'])->group(function () {
     Route::get('/admin/attendances', [AdminController::class, 'index'])
-        ->name('admin.attendances')
-        ->middleware(['can:isAdmin']);
+        ->name('admin.attendances');
 });

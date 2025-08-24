@@ -12,13 +12,13 @@
 
   <div class="attendance-date__content">
     <div class="attendance-table__date">
-      <a href="{{ route('admin.attendances.index', ['date' => $prevDate]) }}">
+      <a href="{{ route('admin.attendances', ['date' => $prevDate]) }}">
         <p class="before-date">←前日</p>
       </a>
-      <form method="GET" action="{{ route('admin.attendances.index') }}" style="display:inline;">
+      <form method="GET" action="{{ route('admin.attendances') }}" style="display:inline;">
         <input class="date-select" type="date" name="date" value="{{ $date }}" onchange="this.form.submit()">
       </form>
-      <a href="{{ route('admin.attendances.index', ['date' => $nextDate]) }}">
+      <a href="{{ route('admin.attendances', ['date' => $nextDate]) }}">
         <p class="after-date">翌日→</p>
       </a>
     </div>

@@ -28,8 +28,9 @@ class EmailCodeController extends Controller
             $user->email_verified_at = now();
             $user->save();
 
-            Auth::login($user);
+            Auth::login($user, true);
             session()->forget(['verification_code', 'registered_user']);
+            $request->session()->regenerate();
 
             return redirect()->route('attendance')->with('message', 'ログインしました。');
         }

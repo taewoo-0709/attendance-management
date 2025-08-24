@@ -33,7 +33,7 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.register');
         });
 
-        Fortify::authenticateUsing(function ($request) {
+        Fortify::authenticateUsing(function (CustomLoginRequest $request) {
             $isAdmin = (int) $request->input('is_admin', 0);
             $user = User::where('email', $request->email)
                 ->where('is_admin', $isAdmin)
