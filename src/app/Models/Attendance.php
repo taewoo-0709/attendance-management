@@ -19,4 +19,10 @@ class Attendance extends Model
     {
         return $this->hasMany(BreakTime::class);
     }
+
+    public function isOnBreak()
+    {
+        $latestBreak = $this->breaks()->latest()->first();
+        return $latestBreak && is_null($latestBreak->break_end_time);
+    }
 }

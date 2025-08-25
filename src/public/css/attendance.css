@@ -1,3 +1,7 @@
+body {
+  background: #f0eff2;
+}
+
 .alert-message {
     padding: 10px 30px;
     border-color: #ccc;
@@ -9,7 +13,6 @@
   max-width: 600px;
   width: 100%;
   margin: 0 auto;
-  background-color: #f0eff2;
   padding: 60px 30px;
   text-align: center;
   box-sizing: border-box;
@@ -20,54 +23,77 @@
 }
 
 .work-situation {
-  font-size: 16px;
-  margin: 0;
+  border: 1px solid #C8C8C8;
+  background-color: #C8C8C8;
+  width: 20%;
+  color: #696969;
   font-weight: bold;
+  border-radius: 20px;
+  padding: 6px 0px;
+  margin: 0 auto;
+  margin-bottom: 15px;
 }
 
-.work__button {
-  display: flex;
-  gap: 20px;
+.btn__group {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+.btn__group button {
+  flex: 1;
+  max-width: 500px;
 }
 
 .date {
-  font-size: 14px;
-  margin: 5px 0;
+  font-size: 25px;
+  margin: 10px 0;
 }
 
 .time {
-  font-size: 14px;
-  margin: 5px 0;
+  font-size: 60px;
+  font-weight: bold;
+  margin: 10px 0;
 }
 
 .btn {
+  display: inline-block;
   font-weight: bold;
+  text-align: center;
+  margin: 0 auto;
   margin-top: 30px;
-  padding: 10px 30px;
-  font-size: 16px;
+  padding: 13px 55px;
+  font-size: 20px;
   color: #fff;
   background-color: #000000;
-  border-radius: 6px;
+  border-radius: 15px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  border: none;
 }
 
 .btn-break {
+  display: inline-block;
   font-weight: bold;
+  text-align: center;
+  margin: 0 auto;
   margin-top: 30px;
-  padding: 10px 30px;
-  font-size: 16px;
+  padding: 13px 40px;
+  font-size: 20px;
   color: #000000;
+  border-color: #fff;
   background-color: #fff;
-  border-radius: 6px;
+  border-radius: 15px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  border: none;
 }
 
 .leaving-work__message {
   font-size: 16px;
-  margin-top: 20px;
-  color: #555;
+  font-weight: bold;
+  padding-left: 20px;
+  margin-top: 50px;
+  color: #000000;
+  letter-spacing: 2px;
 }
 
 @media (min-width: 1400px) and (max-width: 1540px), (min-width: 768px) and (max-width: 850px) {

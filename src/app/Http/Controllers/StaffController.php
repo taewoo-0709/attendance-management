@@ -15,7 +15,14 @@ class StaffController extends Controller
             ->latest()
             ->first();
 
-        return view('attendance', compact('attendance'));
+        $now = now()->locale('ja');
+        $dateStr = $now->isoFormat('YYYY年M月D日 (ddd)');
+        $timeStr = $now->format('H:i');
+
+        $latestBreak = $attendance ? $attendance->breaks()->latest()->first() : null;
+        $onBreak = $latestBreak && !$latestBreak->break_end_time;
+
+        return view('attendance', compact('attendance', 'dateStr', 'timeStr', 'onBreak'));
     }
 
     public function update(Request $request)
@@ -29,6 +36,7 @@ class StaffController extends Controller
             case 'check_in':
                 Attendance::create([
                     'user_id' => $user->id,
+                    'work_date'    => now()->toDateString(),
                     'check_in_time' => now(),
                 ]);
                 break;
