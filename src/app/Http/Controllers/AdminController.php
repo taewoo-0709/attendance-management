@@ -14,23 +14,27 @@ class AdminController extends Controller
         $attendances = Attendance::with('user', 'breaks')
             ->whereDate('work_date', $date)
             ->get()
-            ->map(function($attendance) {
+            ->map(function ($attendance) {
 
-                $totalBreakSeconds = $attendance->breaks->sum(function($b){
+                // 休憩時間合計
+                $totalBreakSeconds = $attendance->breaks->sum(function ($b) {
                     return $b->break_start_time && $b->break_end_time
                         ? $b->break_end_time->diffInSeconds($b->break_start_time)
                         : 0;
                 });
 
-                $workSeconds = $attendance->check_in_time && $attendance->check_out_time
-                    ? $attendance->check_in_time->diffInSeconds($attendance->check_out_time) - $totalBreakSeconds
-                    : null;
+                // 出退勤時間差（秒）
+                $workSeconds = null;
+                if ($attendance->check_in_time && $attendance->check_out_time) {
+                    $workSeconds = $attendance->check_out_time->diffInSeconds($attendance->check_in_time) - $totalBreakSeconds;
+                }
 
+                // 表示用フォーマット
                 $attendance->break_time = gmdate('H:i', $totalBreakSeconds);
                 $attendance->total_time = $workSeconds !== null ? gmdate('H:i', $workSeconds) : '-';
 
                 return $attendance;
-        });
+            });
 
         return view('admin_index', [
             'attendances' => $attendances,
@@ -38,5 +42,12 @@ class AdminController extends Controller
             'prevDate' => date('Y-m-d', strtotime($date .' -1 day')),
             'nextDate' => date('Y-m-d', strtotime($date .' +1 day')),
         ]);
+    }
+
+    public function show(Attendance $attendance)
+    {
+        $attendance->load('user', 'breaks');
+
+        return view('admin.attendances.show', compact('attendance'));
     }
 }

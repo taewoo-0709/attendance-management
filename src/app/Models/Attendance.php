@@ -15,6 +15,17 @@ class Attendance extends Model
         'check_out_time',
     ];
 
+    protected $casts = [
+        'work_date'      => 'date',
+        'check_in_time'  => 'datetime',
+        'check_out_time' => 'datetime',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function breaks()
     {
         return $this->hasMany(BreakTime::class);
@@ -24,5 +35,57 @@ class Attendance extends Model
     {
         $latestBreak = $this->breaks()->latest()->first();
         return $latestBreak && is_null($latestBreak->break_end_time);
+    }
+
+    public function edits()
+    {
+        return $this->hasMany(AttendanceEdit::class);
+    }
+
+    public function getTotalWorkSeconds(): ?int
+    {
+        if ($this->check_in_time && $this->check_out_time) {
+            return $this->check_out_time->diffInSeconds($this->check_in_time);
+        }
+        return null;
+    }
+
+    public function getTotalBreakSeconds(): int
+    {
+        return $this->breaks->sum(function ($break) {
+            if ($break->break_start_time && $break->break_end_time) {
+                return $break->break_end_time->diffInSeconds($break->break_start_time);
+            }
+            return 0;
+        });
+    }
+
+    public function getActualWorkSeconds(): ?int
+    {
+        $total = $this->getTotalWorkSeconds();
+        return $total !== null ? $total - $this->getTotalBreakSeconds() : null;
+    }
+
+    private function formatSeconds(?int $seconds): ?string
+    {
+        if ($seconds === null) return null;
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        return sprintf('%02d:%02d', $hours, $minutes);
+    }
+
+    public function getTotalWorkTimeAttribute()
+    {
+        return $this->formatSeconds($this->getTotalWorkSeconds());
+    }
+
+    public function getTotalBreakTimeAttribute()
+    {
+        return $this->formatSeconds($this->getTotalBreakSeconds());
+    }
+
+    public function getActualWorkTimeAttribute()
+    {
+        return $this->formatSeconds($this->getActualWorkSeconds());
     }
 }

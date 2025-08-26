@@ -12,7 +12,7 @@ class StaffController extends Controller
     {
         $user = Auth::user();
         $attendance = Attendance::where('user_id', $user->id)
-            ->latest()
+            ->where('work_date', now()->toDateString())
             ->first();
 
         $now = now()->locale('ja');
@@ -30,33 +30,39 @@ class StaffController extends Controller
         $user = Auth::user();
         $action = $request->input('action');
 
+        $todayAttendance = Attendance::where('user_id', $user->id)
+        ->where('work_date', now()->toDateString())
+        ->first();
+
         $attendance = Attendance::where('user_id', $user->id)->latest()->first();
 
         switch ($action) {
             case 'check_in':
-                Attendance::create([
-                    'user_id' => $user->id,
-                    'work_date'    => now()->toDateString(),
-                    'check_in_time' => now(),
-                ]);
+                if (!$todayAttendance) {
+                    Attendance::create([
+                        'user_id'       => $user->id,
+                        'work_date'     => now()->toDateString(),
+                        'check_in_time' => now(),
+                    ]);
+                }
                 break;
 
             case 'check_out':
-                if ($attendance) {
-                    $attendance->update(['check_out_time' => now()]);
+                if ($todayAttendance) {
+                    $todayAttendance->update(['check_out_time' => now()]);
                 }
                 break;
 
             case 'break_start':
-                if ($attendance) {
-                    $attendance->breaks()->create(['break_start_time' => now()]);
+                if ($todayAttendance) {
+                    $todayAttendance->breaks()->create(['break_start_time' => now()]);
                 }
                 break;
 
             case 'break_end':
-                if ($attendance) {
-                    $latestBreak = $attendance->breaks()->latest()->first();
-                    if ($latestBreak) {
+                if ($todayAttendance) {
+                    $latestBreak = $todayAttendance->breaks()->latest()->first();
+                    if ($latestBreak && is_null($latestBreak->break_end_time)) {
                         $latestBreak->update(['break_end_time' => now()]);
                     }
                 }

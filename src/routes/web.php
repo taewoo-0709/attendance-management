@@ -42,4 +42,6 @@ Route::middleware(['auth', 'can:isStaff', 'verified'])->group(function () {
 Route::middleware(['auth', 'can:isAdmin'])->group(function () {
     Route::get('/admin/attendances', [AdminController::class, 'index'])
         ->name('admin.attendances');
+    Route::get('/admin/attendances/{attendance}', [AdminController::class, 'show'])
+        ->name('admin.attendances.show');
 });

@@ -12,15 +12,12 @@
 
   <div class="attendance-date__content">
     <div class="attendance-table__date">
-      <a href="{{ route('admin.attendances', ['date' => $prevDate]) }}">
-        <p class="before-date">←前日</p>
-      </a>
+      <a href="{{ route('admin.attendances', ['date' => $prevDate]) }}"> <img class="left" src="{{ asset('images/point_icon.svg') }}" alt="左矢印"> 前日</a>
       <form method="GET" action="{{ route('admin.attendances') }}" style="display:inline;">
+        <img class="calender" src="{{ asset('images/calendar_icon.png') }}" alt="カレンダー">
         <input class="date-select" type="date" name="date" value="{{ $date }}" onchange="this.form.submit()">
       </form>
-      <a href="{{ route('admin.attendances', ['date' => $nextDate]) }}">
-        <p class="after-date">翌日→</p>
-      </a>
+      <a href="{{ route('admin.attendances', ['date' => $nextDate]) }}">翌日 <img class="right" src="{{ asset('images/point_icon.svg') }}" alt="右矢印"></a>
     </div>
     <div class="attendance-table__items">
       <table>
@@ -40,9 +37,11 @@
               <td>{{ $attendance->user->name }}</td>
               <td>{{ $attendance->check_in_time ? $attendance->check_in_time->format('H:i') : '-' }}</td>
               <td>{{ $attendance->check_out_time ? $attendance->check_out_time->format('H:i') : '-' }}</td>
-              <td>{{ $attendance->break_time }}</td>
-              <td>{{ $attendance->total_time }}</td>
-              <td><a href="{{ route('admin.attendances.show', $attendance->id) }}">詳細</a></td>
+              <td>{{ $attendance->total_break_time ?? '-' }}</td>
+              <td>{{ $attendance->actual_work_time ?? '-' }}</td>
+              <td>
+                <a href="{{ route('admin.attendances.show', $attendance->id) }}">詳細</a>
+              </td>
             </tr>
           @endforeach
         </tbody>
