@@ -33,16 +33,19 @@
         </thead>
         <tbody>
           @foreach($attendances as $attendance)
-            <tr>
-              <td>{{ $attendance->user->name }}</td>
-              <td>{{ $attendance->check_in_time ? $attendance->check_in_time->format('H:i') : '-' }}</td>
-              <td>{{ $attendance->check_out_time ? $attendance->check_out_time->format('H:i') : '-' }}</td>
-              <td>{{ $attendance->total_break_time ?? '-' }}</td>
-              <td>{{ $attendance->actual_work_time ?? '-' }}</td>
-              <td>
-                <a href="{{ route('admin.attendances.show', $attendance->id) }}">詳細</a>
-              </td>
-            </tr>
+          <tr>
+            <td>{{ $attendance->user->name }}</td>
+            <td>{{ $attendance->check_in_time ? $attendance->check_in_time->format('H:i') : '' }}</td>
+            <td>{{ $attendance->check_out_time ? $attendance->check_out_time->format('H:i') : '' }}</td>
+            <td>{{ $attendance->total_break_time ?? '' }}</td>
+            <td>{{ $attendance->actual_work_time ?? '' }}</td>
+            <td>
+              <a href="{{ route('admin.attendances.show', [
+                'attendance' => $attendance->id ?? 0,
+                'user_id' => $attendance->user->id
+              ]) }}">詳細</a>
+            </td>
+          </tr>
           @endforeach
         </tbody>
       </table>

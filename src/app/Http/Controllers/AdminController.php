@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class AdminController extends Controller
 {
@@ -11,30 +12,46 @@ class AdminController extends Controller
     {
         $date = $request->input('date', now()->format('Y-m-d'));
 
-        $attendances = Attendance::with('user', 'breaks')
-            ->whereDate('work_date', $date)
-            ->get()
-            ->map(function ($attendance) {
+        $users = User::where('is_admin', 0)
+            ->with(['attendances' => function ($q) use ($date) {
+                $q->whereDate('work_date', $date)->with('breaks');
+            }])->get();
 
-                // 休憩時間合計
-                $totalBreakSeconds = $attendance->breaks->sum(function ($b) {
-                    return $b->break_start_time && $b->break_end_time
-                        ? $b->break_end_time->diffInSeconds($b->break_start_time)
-                        : 0;
-                });
+        $attendances = $users->map(function ($user) {
+            $attendance = $user->attendances->first();
 
-                // 出退勤時間差（秒）
-                $workSeconds = null;
-                if ($attendance->check_in_time && $attendance->check_out_time) {
-                    $workSeconds = $attendance->check_out_time->diffInSeconds($attendance->check_in_time) - $totalBreakSeconds;
-                }
+        if (!$attendance) {
+            $attendance = new Attendance([
+                'work_date' => null,
+                'check_in_time' => null,
+                'check_out_time' => null,
+            ]);
+            $attendance->setRelation('breaks', collect());
+        }
 
-                // 表示用フォーマット
-                $attendance->break_time = gmdate('H:i', $totalBreakSeconds);
-                $attendance->total_time = $workSeconds !== null ? gmdate('H:i', $workSeconds) : '-';
-
-                return $attendance;
+        if ($attendance->breaks->isNotEmpty()) {
+            $totalBreakSeconds = $attendance->breaks->sum(function ($b) {
+                return $b->break_start_time && $b->break_end_time
+                    ? $b->break_end_time->diffInSeconds($b->break_start_time)
+                    : 0;
             });
+            $attendance->break_time = $totalBreakSeconds ? gmdate('H:i', $totalBreakSeconds) : '0:00';
+        } else {
+            $attendance->break_time = '';
+        }
+
+        if ($attendance->check_in_time && $attendance->check_out_time) {
+            $workSeconds = $attendance->check_out_time->diffInSeconds($attendance->check_in_time) - ($attendance->breaks->sum(fn($b) => ($b->break_start_time && $b->break_end_time) ? $b->break_end_time->diffInSeconds($b->break_start_time) : 0));
+            $attendance->total_time = gmdate('H:i', $workSeconds);
+        } else {
+            $attendance->total_time = '';
+        }
+
+        $attendance->user = $user;
+
+        return $attendance;
+    });
+
 
         return view('admin_index', [
             'attendances' => $attendances,
@@ -44,10 +61,23 @@ class AdminController extends Controller
         ]);
     }
 
-    public function show(Attendance $attendance)
+    public function show($id)
     {
-        $attendance->load('user', 'breaks');
+        $attendance = Attendance::find($id);
 
-        return view('admin.attendances.show', compact('attendance'));
+        if (!$attendance) {
+            $attendance = new Attendance([
+                'work_date' => null,
+                'check_in_time' => null,
+                'check_out_time' => null,
+            ]);
+
+            $attendance->user = User::find(request()->query('user_id'));
+            $attendance->breaks = collect();
+        } else {
+            $attendance->load('user', 'breaks');
+        }
+
+        return view('admin_attendance_show', compact('attendance'));
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
+use App\Models\User;
 
 class CustomLoginRequest extends FortifyLoginRequest
 {
@@ -23,11 +24,31 @@ class CustomLoginRequest extends FortifyLoginRequest
      */
     public function rules()
     {
+        $isAdminRoute = $this->is('admin/*');
+
         return [
             'email' => 'required|email|exists:users,email',
             'password' => 'required|string|min:8',
-            'is_admin' => 'nullable|boolean'
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $user = User::where('email', $this->email)->first();
+
+            if (!$user) {
+                return;
+            }
+
+            if ($this->is('admin/*') && $user->is_admin !== 1) {
+                $validator->errors()->add('email', '管理者権限がありません。');
+            }
+
+            if ($this->is('staff/*') && $user->is_admin !== 0) {
+                $validator->errors()->add('email', 'スタッフ権限がありません。');
+            }
+        });
     }
 
     public function messages()
@@ -38,7 +59,6 @@ class CustomLoginRequest extends FortifyLoginRequest
             'email.exists' => 'ログイン情報が登録されていません',
             'password.required' => 'パスワードを入力してください',
             'password.min' => 'パスワードは8文字以上で入力してください',
-            'is_admin.boolean' => '管理者の権限が必要です',
         ];
     }
 }

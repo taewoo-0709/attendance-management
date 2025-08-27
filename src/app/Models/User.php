@@ -49,4 +49,9 @@ implements MustVerifyEmail
     {
 
     }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
 }

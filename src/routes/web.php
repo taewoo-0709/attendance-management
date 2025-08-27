@@ -7,6 +7,7 @@ use App\Http\Controllers\EmailCodeController;
 use App\Notifications\CodeVerifyNotification;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminLoginController;
 
 Route::get('/login', function () {
     return view('auth.login', ['role' => 'staff']);
@@ -14,6 +15,8 @@ Route::get('/login', function () {
 Route::get('/admin/login', function () {
     return view('auth.login', ['role' => 'admin']);
     })->name('admin.login');
+Route::post('/admin/login', [AdminLoginController::class, 'login'])
+    ->name('admin.login.submit');
 
 Route::get('/email/verify', [EmailVerificationController::class, 'showEmailVerificationNotice'])
     ->name('verification.notice');
@@ -27,12 +30,9 @@ Route::get('/verify-code', [EmailCodeController::class, 'showForm'])
 Route::post('/verify-code', [EmailCodeController::class, 'verifyCode'])
     ->name('verification.code.submit');
 
-Route::post('/logout', function () {
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect('/login');
-})->name('logout');
+Route::post('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store'])
+    ->name('login.submit');
+
 
 Route::middleware(['auth', 'can:isStaff', 'verified'])->group(function () {
     Route::get('/attendance', [StaffController::class, 'index'])->name('attendance');
