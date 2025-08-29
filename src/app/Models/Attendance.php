@@ -79,9 +79,25 @@ class Attendance extends Model
         return $this->formatSeconds($this->getTotalWorkSeconds());
     }
 
-    public function getTotalBreakTimeAttribute()
+    public function getTotalBreakTimeAttribute(): string
     {
-        return $this->formatSeconds($this->getTotalBreakSeconds());
+        if (!$this->check_in_time || !$this->check_out_time) {
+            return '';
+        }
+
+        $validBreaks = $this->breaks->filter(function ($b) {
+            return $b->break_start_time && $b->break_end_time;
+        });
+
+        if ($validBreaks->isEmpty()) {
+            return '0:00';
+        }
+
+        $totalBreakSeconds = $validBreaks->sum(function ($b) {
+            return $b->break_end_time->diffInSeconds($b->break_start_time);
+        });
+
+        return $totalBreakSeconds > 0 ? $this->formatSeconds($totalBreakSeconds) : '0:00';
     }
 
     public function getActualWorkTimeAttribute()

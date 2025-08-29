@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class CustomLoginRequest extends FortifyLoginRequest
@@ -41,14 +42,23 @@ class CustomLoginRequest extends FortifyLoginRequest
                 return;
             }
 
-            if ($this->is('admin/*') && $user->is_admin !== 1) {
-                $validator->errors()->add('email', '管理者権限がありません。');
-            }
-
-            if ($this->is('staff/*') && $user->is_admin !== 0) {
-                $validator->errors()->add('email', 'スタッフ権限がありません。');
+            if (!Hash::check($this->password, $user->password)) {
+            $validator->errors()->add('password', 'パスワードが正しくありません。');
             }
         });
+    }
+
+    public function credentials()
+    {
+        $credentials = $this->only('email', 'password');
+
+        if ($this->is('admin/*')) {
+            $credentials['is_admin'] = 1;
+        } else {
+            $credentials['is_admin'] = 0;
+        }
+
+        return $credentials;
     }
 
     public function messages()

@@ -1,4 +1,4 @@
-@extends('layouts.nav')
+@extends('layouts.admin_nav')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/index.css') }}?v={{ time() }}">
@@ -12,12 +12,12 @@
 
   <div class="attendance-date__content">
     <div class="attendance-table__date">
-      <a href="{{ route('admin.attendances', ['date' => $prevDate]) }}"> <img class="left" src="{{ asset('images/point_icon.svg') }}" alt="左矢印"> 前日</a>
-      <form method="GET" action="{{ route('admin.attendances') }}" style="display:inline;">
+      <a href="{{ route('admin.attendance.list', ['date' => $prevDate]) }}"> <img class="left" src="{{ asset('images/point_icon.svg') }}" alt="左矢印"> 前日</a>
+      <form method="GET" action="{{ route('admin.attendance.list') }}" style="display:inline;">
         <img class="calender" src="{{ asset('images/calendar_icon.png') }}" alt="カレンダー">
         <input class="date-select" type="date" name="date" value="{{ $date }}" onchange="this.form.submit()">
       </form>
-      <a href="{{ route('admin.attendances', ['date' => $nextDate]) }}">翌日 <img class="right" src="{{ asset('images/point_icon.svg') }}" alt="右矢印"></a>
+      <a href="{{ route('admin.attendance.list', ['date' => $nextDate]) }}">翌日 <img class="right" src="{{ asset('images/point_icon.svg') }}" alt="右矢印"></a>
     </div>
     <div class="attendance-table__items">
       <table>
@@ -40,8 +40,8 @@
             <td>{{ $attendance->total_break_time ?? '' }}</td>
             <td>{{ $attendance->actual_work_time ?? '' }}</td>
             <td>
-              <a href="{{ route('admin.attendances.show', [
-                'attendance' => $attendance->id ?? 0,
+              <a href="{{ route('admin.attendance.edit', [
+                'id' => $attendance->id ?? 0,
                 'user_id' => $attendance->user->id
               ]) }}">詳細</a>
             </td>

@@ -9,6 +9,9 @@ class AttendanceEdit extends Model
 {
     use HasFactory;
 
+    const STATUS_PENDING = 0;
+    const STATUS_APPROVED = 1;
+
     protected $fillable = [
         'attendance_id',
         'requested_id',
@@ -20,12 +23,6 @@ class AttendanceEdit extends Model
         'status',
     ];
 
-    protected $casts = [
-        'after_check_in'   => 'datetime',
-        'after_break_start'=> 'datetime',
-        'after_break_end'  => 'datetime',
-        'after_check_out'  => 'datetime',
-    ];
 
     public function attendance()
     {
@@ -40,5 +37,10 @@ class AttendanceEdit extends Model
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'approved_id');
+    }
+
+    public function editBreaks()
+    {
+    return $this->hasMany(AttendanceEditBreak::class);
     }
 }

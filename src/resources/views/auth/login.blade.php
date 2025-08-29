@@ -8,7 +8,7 @@
 <div class="login-form">
   <h2 class="login-form__heading">{{ $role === 'admin' ? '管理者ログイン' : 'ログイン' }}</h2>
   <div class="login-form__inner">
-    <form class="login-form__form" action="{{ $role === 'admin' ? route('admin.login.submit') : route('login.submit') }}" method="post">
+    <form class="login-form__form" action="{{ $role === 'admin' ? route('admin.login.submit') : route('login') }}" method="post">
       @csrf
         <input type="hidden" name="role" value="{{ $role }}">
         <div class="login-form__group">

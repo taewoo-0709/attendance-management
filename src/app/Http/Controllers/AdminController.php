@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\AttendanceEdit;
+use App\Models\BreakTime;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -14,54 +17,36 @@ class AdminController extends Controller
 
         $users = User::where('is_admin', 0)
             ->with(['attendances' => function ($q) use ($date) {
-                $q->whereDate('work_date', $date)->with('breaks');
-            }])->get();
+                $q->whereDate('work_date', $date)
+                ->with('breaks');
+            }])
+            ->get();
 
         $attendances = $users->map(function ($user) {
             $attendance = $user->attendances->first();
 
-        if (!$attendance) {
-            $attendance = new Attendance([
-                'work_date' => null,
-                'check_in_time' => null,
-                'check_out_time' => null,
-            ]);
-            $attendance->setRelation('breaks', collect());
-        }
+            if (!$attendance) {
+                $attendance = new Attendance([
+                    'work_date'      => null,
+                    'check_in_time'  => null,
+                    'check_out_time' => null,
+                ]);
+                $attendance->setRelation('breaks', collect());
+            }
 
-        if ($attendance->breaks->isNotEmpty()) {
-            $totalBreakSeconds = $attendance->breaks->sum(function ($b) {
-                return $b->break_start_time && $b->break_end_time
-                    ? $b->break_end_time->diffInSeconds($b->break_start_time)
-                    : 0;
-            });
-            $attendance->break_time = $totalBreakSeconds ? gmdate('H:i', $totalBreakSeconds) : '0:00';
-        } else {
-            $attendance->break_time = '';
-        }
-
-        if ($attendance->check_in_time && $attendance->check_out_time) {
-            $workSeconds = $attendance->check_out_time->diffInSeconds($attendance->check_in_time) - ($attendance->breaks->sum(fn($b) => ($b->break_start_time && $b->break_end_time) ? $b->break_end_time->diffInSeconds($b->break_start_time) : 0));
-            $attendance->total_time = gmdate('H:i', $workSeconds);
-        } else {
-            $attendance->total_time = '';
-        }
-
-        $attendance->user = $user;
-
-        return $attendance;
-    });
-
+            $attendance->user = $user;
+            return $attendance;
+        });
 
         return view('admin_index', [
             'attendances' => $attendances,
-            'date' => $date,
-            'prevDate' => date('Y-m-d', strtotime($date .' -1 day')),
-            'nextDate' => date('Y-m-d', strtotime($date .' +1 day')),
+            'date'        => $date,
+            'prevDate'    => date('Y-m-d', strtotime($date . ' -1 day')),
+            'nextDate'    => date('Y-m-d', strtotime($date . ' +1 day')),
         ]);
     }
 
-    public function show($id)
+    public function edit($id)
     {
         $attendance = Attendance::find($id);
 
@@ -78,6 +63,39 @@ class AdminController extends Controller
             $attendance->load('user', 'breaks');
         }
 
-        return view('admin_attendance_show', compact('attendance'));
+        return view('detail', compact('attendance'));
+    }
+
+    public function approve($id)
+    {
+        DB::transaction(function () use ($id) {
+            $edit = AttendanceEdit::with('attendance')->findOrFail($id);
+
+            $edit->approved_id = auth()->id();
+            $edit->status = AttendanceEdit::STATUS_APPROVED;
+            $edit->save();
+
+            $attendance = $edit->attendance;
+            if ($edit->after_check_in) {
+                $attendance->check_in_time = $edit->after_check_in;
+            }
+            if ($edit->after_check_out) {
+                $attendance->check_out_time = $edit->after_check_out;
+            }
+            $attendance->save();
+
+            if (!empty($edit->breaks)) {
+
+                $attendance->breaks()->delete();
+
+                foreach ($edit->breaks as $break) {
+                    $attendance->breaks()->create([
+                        'start_time' => $break['start_time'],
+                        'end_time'   => $break['end_time'],
+                    ]);
+                }
+            }
+        });
+        return back()->with('success', '承認が完了しました。');
     }
 }

@@ -19,7 +19,7 @@ class CustomLoginResponse implements LoginResponseContract
         $user = auth()->user();
 
         if ($user->is_admin) {
-            return redirect()->route('admin.attendances');
+            return redirect()->route('admin.attendance.list');
         }
 
         if (!$user->hasVerifiedEmail()) {

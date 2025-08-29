@@ -41,7 +41,7 @@
   min-width: 0;
 }
 
-.header-nav__mypage,.header-nav__login {
+.header-nav__attendance-list,.header-nav__attendance,.header-nav__application {
   color: white;
   text-decoration: none;
 }
