@@ -15,11 +15,10 @@ class AttendanceEdit extends Model
     protected $fillable = [
         'attendance_id',
         'requested_id',
-        'after_check_id',
-        'after_break_start',
-        'after_break_end',
+        'after_check_in',
         'after_check_out',
         'approved_id',
+        'reason',
         'status',
     ];
 

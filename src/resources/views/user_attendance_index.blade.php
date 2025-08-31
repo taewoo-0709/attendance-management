@@ -47,7 +47,11 @@
               <td>{{ $att?->total_break_time ?? '' }}</td>
               <td>{{ $att?->actual_work_time ?? '' }}</td>
               <td>
-                <a href="{{ route('attendance.detail', ['id' => $att->id ?? 0]) }}">
+                <a href="{{ route('attendance.detail', [
+                  'id' => $att?->id ?? 0,
+                  'user_id' => $att?->user?->id ?? $user->id,
+                  'date' => $day['date']
+                ]) }}">
                   詳細
                 </a>
               </td>

@@ -42,7 +42,8 @@
             <td>
               <a href="{{ route('admin.attendance.edit', [
                 'id' => $attendance->id ?? 0,
-                'user_id' => $attendance->user->id
+                'user_id' => $attendance->user->id,
+                'date' => $date
               ]) }}">詳細</a>
             </td>
           </tr>

@@ -54,6 +54,8 @@ Route::middleware(['auth', 'can:isStaff', 'verified'])->group(function () {
     Route::get('/attendance/list', [StaffController::class, 'index'])->name('attendance.list');
     Route::get('/attendance/detail/{id}', [StaffController::class, 'edit'])
     ->name('attendance.detail');
+    Route::post('/attendance/detail/{id}', [StaffController::class, 'requestEdit'])
+        ->name('attendance.requestEdit');
 });
 
 Route::middleware(['auth', 'can:isAdmin'])->group(function () {
@@ -61,4 +63,6 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
         ->name('admin.attendance.list');
     Route::get('/admin/attendance/{id}', [AdminController::class, 'edit'])
         ->name('admin.attendance.edit');
+    Route::put('/admin/attendances/{id}', [AdminController::class, 'approve'])
+        ->name('admin.attendance.edit.approve');
 });

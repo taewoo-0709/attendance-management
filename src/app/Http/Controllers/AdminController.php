@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\AttendanceEdit;
 use App\Models\BreakTime;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\AttendanceTimeRequest;
 
 class AdminController extends Controller
 {
@@ -46,13 +47,16 @@ class AdminController extends Controller
         ]);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
+        $layout = auth()->user()->is_admin ? 'layouts.admin_nav' : 'layouts.staff_nav';
+
         $attendance = Attendance::find($id);
 
         if (!$attendance) {
+            $date = request()->query('date');
             $attendance = new Attendance([
-                'work_date' => null,
+                'work_date' => date('Y-m-d'),
                 'check_in_time' => null,
                 'check_out_time' => null,
             ]);
@@ -63,10 +67,10 @@ class AdminController extends Controller
             $attendance->load('user', 'breaks');
         }
 
-        return view('detail', compact('attendance'));
+        return view('detail', compact('attendance', 'layout'));
     }
 
-    public function approve($id)
+    public function approve(AttendanceTimeRequest $request, $id)
     {
         DB::transaction(function () use ($id) {
             $edit = AttendanceEdit::with('attendance')->findOrFail($id);

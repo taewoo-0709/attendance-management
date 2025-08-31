@@ -22,8 +22,7 @@ class CreateAttendanceEditsTable extends Migration
             $table->foreignId('approved_id')->nullable()->constrained('users')->onDelete('set null');
             $table->text('reason');
             $table->unsignedTinyInteger('status')
-                ->default(0)
-                ->comment('0: pending, 1: approved');
+                ->default(0);
             $table->timestamps();
         });
     }
@@ -35,6 +34,7 @@ class CreateAttendanceEditsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('attendance_edit_breaks');
         Schema::dropIfExists('attendance_edits');
     }
 }

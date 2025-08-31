@@ -42,6 +42,11 @@ class Attendance extends Model
         return $this->hasMany(AttendanceEdit::class);
     }
 
+    public function hasPendingEdit()
+    {
+        return $this->edits()->where('status', AttendanceEdit::STATUS_PENDING)->exists();
+    }
+
     public function getTotalWorkSeconds(): ?int
     {
         if ($this->check_in_time && $this->check_out_time) {

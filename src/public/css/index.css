@@ -1,5 +1,6 @@
 body {
   background: #f0eff2;
+  font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
 .attendance-date {
@@ -55,9 +56,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
   cursor: pointer;
   position: absolute;
-  right: 0;
-  width: 100%;
-  height: 100%;
+  margin: auto;
+  width: 100px;
+  height: 25px;
 }
 
 .attendance-table__date a {

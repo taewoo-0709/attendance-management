@@ -30,6 +30,14 @@ Laravel 環境構築
 メールアドレス: admin@example.com<br>
 パスワード: coachtech1100
 
+・ユーザー<br>
+名前:佐藤一郎<br> メールアドレス:staff1@example.com<br>
+名前:鈴木花子<br> メールアドレス:staff2@example.come<br>
+名前:田中次郎<br> メールアドレス:staff3@example.come<br>
+名前:山田優子<br> メールアドレス:staff4@example.come<br>
+<br>
+パスワード（共通）:coachtech123
+
 ## メール認証機能
 mailhogを使用しています。<br>
 メール認証誘導画面の、「認証はこちら」ボタンから認証画面に遷移するため、mailhogにアクセスし、届いているメールから認証コードを確認して認証画面にコードを入力して認証完了してください。

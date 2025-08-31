@@ -42,7 +42,7 @@ class AttendanceSeeder extends Seeder
                     continue;
                 }
 
-                if (rand(1, 100) <= 30) {
+                if (rand(1, 100) <= 25) {
                     continue;
                 }
 

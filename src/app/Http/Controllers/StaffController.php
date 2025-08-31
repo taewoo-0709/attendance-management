@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\AttendanceEdit;
 use App\Models\AttendanceEditBreak;
+use App\Http\Requests\AttendanceTimeRequest;
 
 class StaffController extends Controller
 {
@@ -78,7 +79,10 @@ class StaffController extends Controller
 
     public function index(Request $request)
     {
-        $monthParam = $request->input('date', now()->format('Y-m'));
+        $monthParam = $request->input('date');
+        if (empty($monthParam)) {
+            $monthParam = now()->format('Y-m');
+        }
 
         $carbonDate = Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth();
 
@@ -113,36 +117,72 @@ class StaffController extends Controller
         ));
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        $attendance = Attendance::with(['user', 'breaks'])->findOrFail($id);
-        return view('detail', compact('attendance'));
+        $layout = auth()->user()->is_admin ? 'layouts.admin_nav' : 'layouts.staff_nav';
+        $isDetailPage = true;
+
+        $attendance = Attendance::with(['user', 'breaks'])->find($id);
+
+        if (!$attendance) {
+            $date = request()->query('date');
+            $attendance = new Attendance([
+                'work_date' => date('Y-m-d'),
+                'check_in_time' => null,
+                'check_out_time' => null,
+            ]);
+            $attendance->user = auth()->user();
+            $attendance->breaks = collect();
+        }
+
+        $pendingEdit = AttendanceEdit::where('attendance_id', $attendance->id ?? 0)
+            ->where('requested_id', Auth::id())
+            ->where('status', AttendanceEdit::STATUS_PENDING)
+            ->with('editBreaks')
+            ->first();
+
+        return view('detail', compact('attendance', 'layout', 'isDetailPage', 'pendingEdit'));
     }
 
-    public function requestEdit(Request $request, $id)
+
+    public function requestEdit(AttendanceTimeRequest $request, $id)
     {
         $attendance = Attendance::findOrFail($id);
 
-        AttendanceEdit::create([
-            'attendance_id' => $attendance->id,
-            'requested_id' => Auth::id(),
-            'check_in_time' => $request->input('check_in_time'),
-            'check_out_time'=> $request->input('check_out_time'),
-            'status'        => AttendanceEdit::STATUS_PENDING,
+        $checkIn = $request->input('check_in_time')
+            ? $attendance->work_date->format('Y-m-d') . ' ' . $request->input('check_in_time') . ':00'
+            : null;
+
+        $checkOut = $request->input('check_out_time')
+            ? $attendance->work_date->format('Y-m-d') . ' ' . $request->input('check_out_time') . ':00'
+            : null;
+
+        $attendanceEdit = AttendanceEdit::create([
+            'attendance_id'   => $attendance->id,
+            'requested_id'    => Auth::id(),
+            'after_check_in'  => $checkIn,
+            'after_check_out' => $checkOut,
+            'reason'          => $request->input('remarks'),
+            'status'          => AttendanceEdit::STATUS_PENDING,
         ]);
 
         if ($request->has('breaks')) {
-        foreach ($request->input('breaks') as $break) {
-            if (!empty($break['start']) || !empty($break['end'])) {
-                AttendanceEditBreak::create([
-                    'attendance_edit_id' => $attendanceEdit->id,
-                    'break_start_time'   => $break['start'],
-                    'break_end_time'     => $break['end'],
-                    'status'             => AttendanceEdit::STATUS_PENDING,
-                ]);
+            foreach ($request->input('breaks') as $break) {
+                if (!empty($break['start']) || !empty($break['end'])) {
+                    $breakStart = !empty($break['start'])
+                        ? $attendance->work_date->format('Y-m-d') . ' ' . $break['start'] . ':00'
+                        : null;
+                    $breakEnd = !empty($break['end'])
+                        ? $attendance->work_date->format('Y-m-d') . ' ' . $break['end'] . ':00'
+                        : null;
+
+                    $attendanceEdit->editBreaks()->create([
+                        'after_break_start_time' => $breakStart,
+                        'after_break_end_time'   => $breakEnd,
+                    ]);
+                }
             }
         }
-    }
-    return back()->with('success', '修正を申請しました。');
+        return back()->with('success', '修正を申請しました。');
     }
 }
