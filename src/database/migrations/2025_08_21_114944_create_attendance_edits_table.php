@@ -19,7 +19,6 @@ class CreateAttendanceEditsTable extends Migration
             $table->foreignId('requested_id')->constrained('users')->onDelete('cascade');
             $table->dateTime('after_check_in')->nullable();
             $table->dateTime('after_check_out')->nullable();
-            $table->foreignId('approved_id')->nullable()->constrained('users')->onDelete('set null');
             $table->text('reason');
             $table->unsignedTinyInteger('status')
                 ->default(0);
