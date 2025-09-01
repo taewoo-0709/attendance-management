@@ -53,6 +53,8 @@ class AdminController extends Controller
 
         $attendance = Attendance::find($id);
 
+        $date = $request->query('date', $attendance->work_date ?? now()->format('Y-m-d'));
+
         if (!$attendance) {
             $date = request()->query('date');
             $attendance = new Attendance([
@@ -67,39 +69,67 @@ class AdminController extends Controller
             $attendance->load('user', 'breaks');
         }
 
-        return view('detail', compact('attendance', 'layout'));
+        return view('detail', [
+            'attendance' => $attendance,
+            'layout' => $layout,
+            'pendingEdit' => null,
+            'date' => $date,
+        ]);
     }
 
-    public function approve(AttendanceTimeRequest $request, $id)
+    public function update(AttendanceTimeRequest $request, $id)
     {
-        DB::transaction(function () use ($id) {
-            $edit = AttendanceEdit::with('attendance')->findOrFail($id);
+        DB::transaction(function () use ($request, $id) {
+            $attendance = Attendance::with('breaks')->findOrFail($id);
 
-            $edit->approved_id = auth()->id();
-            $edit->status = AttendanceEdit::STATUS_APPROVED;
-            $edit->save();
+        $attendance->update([
+            'check_in_time'  => $request->input('check_in_time'),
+            'check_out_time' => $request->input('check_out_time'),
+            'reason'         => $request->input('remarks'),
+        ]);
 
-            $attendance = $edit->attendance;
-            if ($edit->after_check_in) {
-                $attendance->check_in_time = $edit->after_check_in;
-            }
-            if ($edit->after_check_out) {
-                $attendance->check_out_time = $edit->after_check_out;
-            }
-            $attendance->save();
+        $attendance->breaks()->delete();
 
-            if (!empty($edit->breaks)) {
-
-                $attendance->breaks()->delete();
-
-                foreach ($edit->breaks as $break) {
+        if ($request->has('breaks')) {
+            foreach ($request->input('breaks') as $break) {
+                if (!empty($break['start']) && !empty($break['end'])) {
                     $attendance->breaks()->create([
-                        'start_time' => $break['start_time'],
-                        'end_time'   => $break['end_time'],
+                        'break_start_time' => $break['start'],
+                        'break_end_time'   => $break['end'],
                     ]);
                 }
             }
+        }
+    });
+        return redirect()->route('admin.attendance.update', $id)
+            ->with('success', '勤怠データを更新しました。');
+    }
+
+    public function store(AttendanceTimeRequest $request)
+    {
+        $attendance = null;
+        DB::transaction(function () use ($request, &$attendance) {
+            $attendance = Attendance::create([
+                'user_id'       => $request->input('user_id'),
+                'work_date'     => $request->input('work_date'),
+                'check_in_time' => $request->input('check_in_time'),
+                'check_out_time'=> $request->input('check_out_time'),
+                'reason'        => $request->input('remarks'),
+            ]);
+
+            if ($request->has('breaks')) {
+                foreach ($request->input('breaks') as $break) {
+                    if (!empty($break['start']) && !empty($break['end'])) {
+                        $attendance->breaks()->create([
+                            'break_start_time' => $break['start'],
+                            'break_end_time'   => $break['end'],
+                        ]);
+                    }
+                }
+            }
         });
-        return back()->with('success', '承認が完了しました。');
+
+        return redirect()->route('admin.attendance.edit', $attendance->id)
+        ->with('success', '勤怠データを登録しました。');
     }
 }

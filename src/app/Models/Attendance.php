@@ -13,6 +13,7 @@ class Attendance extends Model
         'work_date',
         'check_in_time',
         'check_out_time',
+        'reason',
     ];
 
     protected $casts = [

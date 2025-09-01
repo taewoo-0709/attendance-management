@@ -122,32 +122,51 @@ class StaffController extends Controller
         $layout = auth()->user()->is_admin ? 'layouts.admin_nav' : 'layouts.staff_nav';
         $isDetailPage = true;
 
+        $date = $request->query('date', now()->format('Y-m-d'));
+
         $attendance = Attendance::with(['user', 'breaks'])->find($id);
 
         if (!$attendance) {
-            $date = request()->query('date');
             $attendance = new Attendance([
-                'work_date' => date('Y-m-d'),
+                'user_id' => Auth::id(),
+                'work_date' => $date,
                 'check_in_time' => null,
                 'check_out_time' => null,
+                'reason' => null,
             ]);
             $attendance->user = auth()->user();
             $attendance->breaks = collect();
+            $attendanceId = null;
+        } else {
+            $attendanceId = $attendance->id;
         }
 
-        $pendingEdit = AttendanceEdit::where('attendance_id', $attendance->id ?? 0)
-            ->where('requested_id', Auth::id())
+        $pendingEditQuery = AttendanceEdit::with('editBreaks')
             ->where('status', AttendanceEdit::STATUS_PENDING)
-            ->with('editBreaks')
-            ->first();
+            ->where('attendance_id', $attendanceId);
 
-        return view('detail', compact('attendance', 'layout', 'isDetailPage', 'pendingEdit'));
+            if (!auth()->user()->is_admin) {
+                $pendingEditQuery->where('requested_id', Auth::id());
+            }
+
+            $pendingEdit = $pendingEditQuery->latest('created_at')->first();
+
+        return view('detail', compact('attendance', 'layout', 'date', 'isDetailPage', 'pendingEdit'));
     }
 
-
-    public function requestEdit(AttendanceTimeRequest $request, $id)
+    public function requestEdit(AttendanceTimeRequest $request, $id = null)
     {
-        $attendance = Attendance::findOrFail($id);
+        $attendance = Attendance::find($id);
+
+        if (!$attendance) {
+            $attendance = Attendance::create([
+                'user_id' => Auth::id(),
+                'work_date' => $request->input('work_date'),
+                'check_in_time' => null,
+                'check_out_time' => null,
+                'reason' => null,
+            ]);
+        }
 
         $checkIn = $request->input('check_in_time')
             ? $attendance->work_date->format('Y-m-d') . ' ' . $request->input('check_in_time') . ':00'
@@ -158,7 +177,7 @@ class StaffController extends Controller
             : null;
 
         $attendanceEdit = AttendanceEdit::create([
-            'attendance_id'   => $attendance->id,
+            'attendance_id'   => $attendance->id ?? null,
             'requested_id'    => Auth::id(),
             'after_check_in'  => $checkIn,
             'after_check_out' => $checkOut,
@@ -183,6 +202,18 @@ class StaffController extends Controller
                 }
             }
         }
-        return back()->with('success', '修正を申請しました。');
+        $pendingEdit = AttendanceEdit::with('editBreaks')
+            ->where('attendance_id', $attendance->id)
+            ->where('status', AttendanceEdit::STATUS_PENDING)
+            ->where('requested_id', Auth::id())
+            ->latest('created_at')
+            ->first();
+
+        $layout = auth()->user()->is_admin ? 'layouts.admin_nav' : 'layouts.staff_nav';
+        $date = $attendance->work_date->format('Y-m-d');
+        $isDetailPage = true;
+
+        return view('detail', compact('attendance', 'layout', 'date', 'isDetailPage', 'pendingEdit'))
+            ->with('success', '修正を申請しました。');
     }
 }

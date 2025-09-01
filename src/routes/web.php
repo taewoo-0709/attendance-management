@@ -63,6 +63,8 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
         ->name('admin.attendance.list');
     Route::get('/admin/attendance/{id}', [AdminController::class, 'edit'])
         ->name('admin.attendance.edit');
-    Route::put('/admin/attendances/{id}', [AdminController::class, 'approve'])
-        ->name('admin.attendance.edit.approve');
+    Route::put('/admin/attendance/{id}', [AdminController::class, 'update'])
+        ->name('admin.attendance.update');
+    Route::post('/admin/attendance', [AdminController::class, 'store'])
+        ->name('admin.attendance.store');
 });
