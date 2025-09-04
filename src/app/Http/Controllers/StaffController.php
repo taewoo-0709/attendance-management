@@ -216,4 +216,19 @@ class StaffController extends Controller
         return view('detail', compact('attendance', 'layout', 'date', 'isDetailPage', 'pendingEdit'))
             ->with('success', '修正を申請しました。');
     }
+
+    public function indexRequest(Request $request)
+    {
+        $layout = auth()->user()->is_admin ? 'layouts.admin_nav' : 'layouts.staff_nav';
+        $user = Auth::user();
+        $status = $request->query('status', 0);
+
+        $requests = AttendanceEdit::with(['attendance.user'])
+            ->where('requested_id', $user->id)
+            ->where('status', $status)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('application', compact('requests', 'status', 'layout'));
+    }
 }

@@ -56,6 +56,8 @@ Route::middleware(['auth', 'can:isStaff', 'verified'])->group(function () {
     ->name('attendance.detail');
     Route::post('/attendance/detail/{id}', [StaffController::class, 'requestEdit'])
         ->name('attendance.requestEdit');
+    Route::get('/stamp_correction_request/list', [StaffController::class, 'indexRequest'])
+        ->name('attendance.requestlist');
 });
 
 Route::middleware(['auth', 'can:isAdmin'])->group(function () {

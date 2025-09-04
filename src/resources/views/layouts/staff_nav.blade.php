@@ -15,7 +15,7 @@
       <a class="header-nav__attendance-list" href="/attendance/list">勤怠一覧</a>
     </li>
     <li>
-      <a class="header-nav__application" href="/stamp_correction_request/list }}">申請</a>
+      <a class="header-nav__application" href="{{ route('attendance.requestlist') }}">申請</a>
     </li>
     <li>
       <form class="header-nav__logout" action="{{ route('logout.submit') }}" method="post">
@@ -29,7 +29,7 @@
           <a class="header-nav__attendance-list" href="/attendance/list">今月の出勤一覧</a>
         </li>
         <li>
-          <a class="header-nav__application" href="/stamp_correction_request/list">申請一覧</a>
+          <a class="header-nav__application" href="{{ route('attendance.requestlist') }}">申請一覧</a>
         </li>
         <li>
           <form class="header-nav__logout" action="{{ route('logout.submit') }}" method="post">
@@ -45,7 +45,7 @@
           <a class="header-nav__attendance-list" href="/attendance/list">勤怠一覧</a>
         </li>
         <li>
-          <a class="header-nav__application" href="/stamp_correction_request/list">申請</a>
+          <a class="header-nav__application" href="{{ route('attendance.requestlist') }}">申請</a>
         </li>
         <li>
           <form class="header-nav__logout" action="{{ route('logout.submit') }}" method="post">

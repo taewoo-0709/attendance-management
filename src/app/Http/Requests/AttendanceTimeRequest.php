@@ -28,7 +28,7 @@ class AttendanceTimeRequest extends FormRequest
             'check_out_time'  => 'nullable|date_format:H:i|after:check_in_time',
             'breaks.*.start'  => 'nullable|date_format:H:i',
             'breaks.*.end'    => 'nullable|date_format:H:i',
-            'remarks'         => 'required|string|max:100',
+            'remarks'         => 'required|string|max:20',
         ];
     }
 
@@ -45,7 +45,7 @@ class AttendanceTimeRequest extends FormRequest
 
             'remarks.required' => '備考を記入してください。',
             'remarks.string'   => '備考は文字列で入力してください。',
-            'remarks.max'      => '備考は100文字以内で入力してください。',
+            'remarks.max'      => '備考は20文字以内で入力してください。',
         ];
     }
 
