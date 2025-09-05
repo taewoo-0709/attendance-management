@@ -9,9 +9,9 @@ body {
   padding: 40px 20px;
 }
 
-.attendance-date__title .title {
+.attendance-date__title {
   padding: 8px;
-  font-size: 28px;
+  font-size: 20px;
   border-left: 8px solid #000;
   margin: 40px 0;
   font-weight: bold;

@@ -9,6 +9,8 @@ use App\Models\AttendanceEdit;
 use App\Models\BreakTime;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\AttendanceTimeRequest;
+use Carbon\Carbon;
+
 
 class AdminController extends Controller
 {
@@ -53,12 +55,12 @@ class AdminController extends Controller
 
         $attendance = Attendance::find($id);
 
-        $date = $request->query('date', $attendance->work_date ?? now()->format('Y-m-d'));
+        $date = $request->query('date');
 
         if (!$attendance) {
             $date = request()->query('date');
             $attendance = new Attendance([
-                'work_date' => date('Y-m-d'),
+                'work_date' => $date ?? now()->format('Y-m-d'),
                 'check_in_time' => null,
                 'check_out_time' => null,
             ]);
@@ -74,6 +76,7 @@ class AdminController extends Controller
             'layout' => $layout,
             'pendingEdit' => null,
             'date' => $date,
+            'isApprovalMode' => false,
         ]);
     }
 
@@ -131,5 +134,100 @@ class AdminController extends Controller
 
         return redirect()->route('admin.attendance.edit', $attendance->id)
         ->with('success', '勤怠データを登録しました。');
+    }
+
+    public function staffIndex()
+    {
+        $staffs = User::where('is_admin', 0)->get();
+        $isAdmin = auth()->user()->is_admin;
+
+        return view('user_index', compact('staffs', 'isAdmin'));
+    }
+
+    public function attendanceIndex(Request $request, $id)
+    {
+        $layout = auth()->user()->is_admin ? 'layouts.admin_nav' : 'layouts.staff_nav';
+        $monthParam = $request->input('date');
+        if (empty($monthParam)) {
+            $monthParam = now()->format('Y-m');
+        }
+
+        $carbonDate = Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth();
+
+        $month    = $carbonDate->format('Y-m');
+        $prevDate = $carbonDate->copy()->subMonth()->format('Y-m');
+        $nextDate = $carbonDate->copy()->addMonth()->format('Y-m');
+
+        $targetUser = User::findOrFail($id);
+
+        $attendances = $targetUser->attendances()
+            ->whereBetween('work_date', [
+                $carbonDate->copy()->startOfMonth(),
+                $carbonDate->copy()->endOfMonth(),
+            ])
+            ->with('breaks')
+            ->get()
+            ->keyBy(fn ($att) => $att->work_date->format('Y-m-d'));
+
+        $days = [];
+        $cursor = $carbonDate->copy();
+        while ($cursor->lte($carbonDate->copy()->endOfMonth())) {
+            $dateStr = $cursor->format('Y-m-d');
+            $days[] = [
+                'date'       => $dateStr,
+                'attendance' => $attendances->get($dateStr),
+            ];
+            $cursor->addDay();
+        }
+
+        return view('user_attendance_index', compact(
+            'layout', 'targetUser', 'days', 'month', 'prevDate', 'nextDate'
+        ));
+    }
+
+    public function approveView(AttendanceEdit $attendance_correct_request)
+    {
+        $attendance_correct_request->load('attendance.user', 'editBreaks');
+
+        return view('detail', [
+            'attendance'     => $attendance_correct_request->attendance,
+            'pendingEdit'    => $attendance_correct_request,
+            'layout'         => 'layouts.admin_nav',
+            'date'           => $attendance_correct_request->attendance->work_date,
+            'isApprovalMode' => true,
+        ]);
+    }
+
+    public function approve(Request $request, AttendanceEdit $attendance_correct_request)
+    {
+        $attendanceEdit = $attendance_correct_request;
+        DB::transaction(function () use ($attendanceEdit) {
+            $attendance = $attendanceEdit->attendance;
+
+            if (!$attendance) {
+                return redirect()->back()->with('error', '紐づく勤怠データが存在しません');
+            }
+
+            $attendance->update([
+                'check_in_time'  => $attendanceEdit->after_check_in,
+                'check_out_time' => $attendanceEdit->after_check_out,
+                'reason'        => $attendanceEdit->reason,
+            ]);
+
+            $attendance->breaks()->delete();
+            foreach ($attendanceEdit->editBreaks as $editBreak) {
+                $attendance->breaks()->create([
+                    'break_start_time' => $editBreak->after_break_start_time,
+                    'break_end_time'   => $editBreak->after_break_end_time,
+                ]);
+            }
+
+            $attendanceEdit->update(['status' => 1]);
+        });
+
+        return redirect()->route('admin.attendance.approveview', [
+            'attendance_correct_request' => $attendanceEdit->id
+        ])->with('success', '勤怠修正申請を承認しました。');
+
     }
 }

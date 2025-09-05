@@ -79,6 +79,7 @@ class StaffController extends Controller
 
     public function index(Request $request)
     {
+        $layout = auth()->user()->is_admin ? 'layouts.admin_nav' : 'layouts.staff_nav';
         $monthParam = $request->input('date');
         if (empty($monthParam)) {
             $monthParam = now()->format('Y-m');
@@ -90,9 +91,9 @@ class StaffController extends Controller
         $prevDate = $carbonDate->copy()->subMonth()->format('Y-m');
         $nextDate = $carbonDate->copy()->addMonth()->format('Y-m');
 
-        $user = Auth::user();
+        $targetUser = Auth::user();
 
-        $attendances = $user->attendances()
+        $attendances = $targetUser->attendances()
             ->whereBetween('work_date', [
                 $carbonDate->copy()->startOfMonth(),
                 $carbonDate->copy()->endOfMonth(),
@@ -113,7 +114,7 @@ class StaffController extends Controller
         }
 
         return view('user_attendance_index', compact(
-            'user', 'days', 'month', 'prevDate', 'nextDate'
+            'targetUser', 'days', 'month', 'prevDate', 'nextDate', 'layout'
         ));
     }
 
@@ -215,20 +216,5 @@ class StaffController extends Controller
 
         return view('detail', compact('attendance', 'layout', 'date', 'isDetailPage', 'pendingEdit'))
             ->with('success', '修正を申請しました。');
-    }
-
-    public function indexRequest(Request $request)
-    {
-        $layout = auth()->user()->is_admin ? 'layouts.admin_nav' : 'layouts.staff_nav';
-        $user = Auth::user();
-        $status = $request->query('status', 0);
-
-        $requests = AttendanceEdit::with(['attendance.user'])
-            ->where('requested_id', $user->id)
-            ->where('status', $status)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return view('application', compact('requests', 'status', 'layout'));
     }
 }

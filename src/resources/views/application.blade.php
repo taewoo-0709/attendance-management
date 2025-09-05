@@ -11,13 +11,13 @@
   <ul class="application-tabs">
     <li class="application-tab-item">
       <a class="application-tab-link {{ $status == 0 ? 'active' : '' }}"
-        href="{{ route('attendance.requestlist', ['status' => 0]) }}">
+        href="{{ route('attendance.request.list', ['status' => 0]) }}">
         承認待ち
       </a>
     </li>
     <li class="application-tab-item">
       <a class="application-tab-link {{ $status == 1 ? 'active' : '' }}"
-        href="{{ route('attendance.requestlist', ['status' => 1]) }}">
+        href="{{ route('attendance.request.list', ['status' => 1]) }}">
         承認済み
       </a>
     </li>
@@ -42,7 +42,13 @@
           <td>{{ \Carbon\Carbon::parse($request->attendance->work_date)->format('Y/m/d') }}</td>
           <td>{{ $request->reason }}</td>
           <td>{{ $request->created_at->format('Y/m/d') }}</td>
-          <td><a href="{{ route('attendance.detail', ['id' => $request->attendance_id]) }}" class="application-detail-link">詳細</a></td>
+          <td>
+            <a class="application-detail-link" href="{{ $isAdmin
+              ? route('admin.attendance.approveview', ['attendance_correct_request' => $request->id])
+              : route('attendance.detail', ['id' => $request->attendance_id, 'date' => $request->attendance->work_date]) }}">
+                詳細
+            </a>
+          </td>
         </tr>
       @empty
         <tr>

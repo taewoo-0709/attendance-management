@@ -22,11 +22,11 @@ body {
 }
 
 .attendance-detail .title {
-  font-size: 22px;
+  font-size: 25px;
   font-weight: bold;
   border-left: 6px solid #000;
   padding-left: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 50px;
 }
 
 .attendance-detail__table {
@@ -135,4 +135,9 @@ body {
 
 .text-muted {
   color: #FF9494;
+}
+
+.btn.btn-secondary {
+  background-color: #696969;
+  color: #fff;
 }

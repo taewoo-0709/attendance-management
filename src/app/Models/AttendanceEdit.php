@@ -25,17 +25,12 @@ class AttendanceEdit extends Model
 
     public function attendance()
     {
-        return $this->belongsTo(Attendance::class);
+        return $this->belongsTo(Attendance::class, 'attendance_id');
     }
 
     public function requestedBy()
     {
         return $this->belongsTo(User::class, 'requested_id');
-    }
-
-    public function approvedBy()
-    {
-        return $this->belongsTo(User::class, 'approved_id');
     }
 
     public function editBreaks()
