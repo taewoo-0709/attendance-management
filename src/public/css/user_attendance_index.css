@@ -106,3 +106,22 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   border-bottom: none;
   font-weight: bold;
 }
+
+.attendance-export {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn-primary {
+  letter-spacing: 3px;
+  padding: 10px 35px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}

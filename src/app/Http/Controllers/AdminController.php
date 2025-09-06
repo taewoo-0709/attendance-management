@@ -10,6 +10,7 @@ use App\Models\BreakTime;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\AttendanceTimeRequest;
 use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 
 class AdminController extends Controller
@@ -229,5 +230,45 @@ class AdminController extends Controller
             'attendance_correct_request' => $attendanceEdit->id
         ])->with('success', '勤怠修正申請を承認しました。');
 
+    }
+
+    public function exportCsv(Request $request, $id)
+    {
+        $month = $request->input('date', now()->format('Y-m'));
+        $startDate = Carbon::parse($month)->startOfMonth();
+        $endDate   = Carbon::parse($month)->endOfMonth();
+
+        $user = User::findOrFail($id);
+
+        $attendances = Attendance::where('user_id', $id)
+            ->whereBetween('work_date', [$startDate, $endDate])
+            ->with('breaks')
+            ->orderBy('work_date')
+            ->get();
+
+        $response = new StreamedResponse(function () use ($attendances, $user, $month) {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, ['日付', '出勤', '退勤', '休憩', '合計']);
+
+            foreach ($attendances as $att) {
+                fputcsv($handle, [
+                    $att->work_date->format('Y/m/d'),
+                    optional($att->check_in_time)->format('H:i'),
+                    optional($att->check_out_time)->format('H:i'),
+                    $att->total_break_time,
+                    $att->actual_work_time,
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        $fileName = $user->name . '_' . $month . '月' . '_勤怠.csv';
+
+        $response->headers->set('Content-Type', 'text/csv; charset=SJIS-win');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+
+        return $response;
     }
 }

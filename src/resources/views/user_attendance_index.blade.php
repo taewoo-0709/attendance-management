@@ -90,7 +90,13 @@
         </tbody>
       </table>
     </div>
-  </div>
+    <div class="attendance-export">
+      @if(auth()->user()->is_admin)
+        <a href="{{ route('admin.attendance.csv', ['id' => $targetUser->id, 'date' => $month]) }}" class="btn btn-primary">
+          CSV出力
+        </a>
+      @endif
+    </div>
   </div>
 </div>
 @endsection

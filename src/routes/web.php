@@ -76,6 +76,8 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
         ->name('admin.attendance.approveview');
     Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [AdminController::class, 'approve'])
         ->name('admin.attendance.approve');
+    Route::get('/admin/attendance/{id}/csv', [AdminController::class, 'exportCsv'])
+        ->name('admin.attendance.csv');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
