@@ -16,13 +16,14 @@ use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
-
+use Laravel\Fortify\Contracts\LogoutResponse;
+use App\Actions\Fortify\CustomLogoutResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-
+        $this->app->singleton(LogoutResponse::class, CustomLogoutResponse::class);
     }
 
     public function boot(): void

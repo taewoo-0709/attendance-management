@@ -13,7 +13,7 @@
       <a class="header-nav__application" href="{{ route('attendance.request.list') }}">申請一覧</a>
     </li>
     <li>
-      <form class="header-nav__logout" action="{{ route('logout.submit') }}" method="post">
+      <form class="header-nav__logout" action="{{ route('logout') }}" method="post">
         @csrf
           <button class="header-nav__button">ログアウト</button>
       </form>

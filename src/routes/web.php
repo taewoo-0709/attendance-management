@@ -35,20 +35,6 @@ Route::get('/verify-code', [EmailCodeController::class, 'showForm'])
 Route::post('/verify-code', [EmailCodeController::class, 'verifyCode'])
     ->name('verification.code.submit');
 
-Route::post('/logout', function (Request $request) {
-    $user = Auth::user();
-
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-
-    if ($user && $user->is_admin === 1) {
-        return redirect('/admin/login');
-    }
-
-    return redirect('/login');
-})->name('logout.submit');
-
 Route::middleware(['auth', 'can:isStaff', 'verified'])->group(function () {
     Route::get('/attendance', [StaffController::class, 'show'])->name('attendance');
     Route::post('/attendance', [StaffController::class, 'update'])->name('attendance.update');
@@ -76,7 +62,7 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
         ->name('admin.attendance.approveview');
     Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [AdminController::class, 'approve'])
         ->name('admin.attendance.approve');
-    Route::get('/admin/attendance/{id}/csv', [AdminController::class, 'exportCsv'])
+    Route::get('/admin/attendance/{id}/csv',[AdminController::class, 'exportCsv'])
         ->name('admin.attendance.csv');
 });
 
