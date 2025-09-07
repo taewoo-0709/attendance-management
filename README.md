@@ -25,6 +25,8 @@ Laravel 環境構築
 
 ・ php artisan db:seed
 
+※attendances_tableのreasonはnullableですが、管理者修正時もreasonを入力必須のバリデーションを実装しています。<br>そのため、Seederや通常打刻ではreasonは不要としています。
+
 ### ユーザー例
 ・ 管理者
 メールアドレス: admin@example.com<br>
@@ -64,7 +66,7 @@ mailhogを使用しています。<br>
 
 
 ## ER図
-
+![alt text](<スクリーンショット 2025-09-07 11.46.20.png>)
 
 ## 使用技術 🔗
 

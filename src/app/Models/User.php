@@ -54,4 +54,10 @@ implements MustVerifyEmail
     {
         return $this->hasMany(Attendance::class);
     }
+
+    public function attendanceEdits()
+    {
+        return $this->hasMany(AttendanceEdit::class, 'requested_id');
+    }
+
 }
