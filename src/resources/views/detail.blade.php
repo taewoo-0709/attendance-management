@@ -138,8 +138,8 @@
         @if($pendingEdit)
           <p>{{ optional($pendingEdit)->reason ?? $attendance->remarks ?? '' }}</p>
         @else
-            <textarea name="remarks" cols="40" rows="2">{{ old('remarks', $attendance->reason ?? '' ) }}</textarea><br>
-            @error('remarks')
+            <textarea name="reason" cols="40" rows="2">{{ old('reason', $attendance->reason ?? '' ) }}</textarea><br>
+            @error('reason')
               <p class="detail-form__error-message">{{ $message }}</p>
             @enderror
         @endif
@@ -154,7 +154,6 @@
           <form action="{{ route('admin.attendance.approve', ['attendance_correct_request' => $pendingEdit->id]) }}" method="post">
           @csrf
             <button type="submit" class="btn btn-success">承認</button>
-          </form>
         @else
           <button type="button" class="btn btn-secondary" disabled>承認済み</button>
         @endif

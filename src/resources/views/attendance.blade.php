@@ -15,7 +15,7 @@
       <p class="time time-display">{{ $timeStr }}</p>
       <form action="{{ route('attendance.update') }}" method="POST">
         @csrf
-          <button class="work__button btn" type="submit" name="action" value="check_in">出 勤</button>
+          <button class="work__button btn" type="submit" name="action" value="check_in">出勤</button>
       </form>
     </div>
 
@@ -29,11 +29,11 @@
       <div class="btn__group">
         <form action="{{ route('attendance.update') }}" method="POST">
         @csrf
-          <button class="work__button btn" type="submit" name="action" value="check_out">退 勤</button>
+          <button class="work__button btn" type="submit" name="action" value="check_out">退勤</button>
         </form>
         <form action="{{ route('attendance.update') }}" method="POST">
         @csrf
-          <button class="work__button btn-break" type="submit" name="action" value="break_start">休 憩 入</button>
+          <button class="work__button btn-break" type="submit" name="action" value="break_start">休憩入</button>
         </form>
       </div>
     </div>
@@ -47,7 +47,7 @@
       <p class="time time-display">{{ $timeStr }}</p>
       <form action="{{ route('attendance.update') }}" method="POST">
       @csrf
-        <button class="work__button btn-break" type="submit" name="action" value="break_end">休 憩 戻</button>
+        <button class="work__button btn-break" type="submit" name="action" value="break_end">休憩戻</button>
       </form>
     </div>
 

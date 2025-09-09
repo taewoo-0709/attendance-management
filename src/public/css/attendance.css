@@ -70,6 +70,7 @@ body {
   border-radius: 15px;
   cursor: pointer;
   border: none;
+  letter-spacing: 2px;
 }
 
 .btn-break {
@@ -86,6 +87,7 @@ body {
   border-radius: 15px;
   cursor: pointer;
   border: none;
+  letter-spacing: 2px;
 }
 
 .leaving-work__message {

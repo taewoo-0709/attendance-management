@@ -25,7 +25,9 @@ class StaffController extends Controller
         $timeStr = $now->format('H:i');
 
         $latestBreak = $attendance ? $attendance->breaks()->latest()->first() : null;
-        $onBreak = $latestBreak && !$latestBreak->break_end_time;
+        $onBreak = $attendance
+        ? $attendance->breaks()->whereNull('break_end_time')->exists()
+        : false;
 
         return view('attendance', compact('attendance', 'dateStr', 'timeStr', 'onBreak'));
     }
@@ -182,7 +184,7 @@ class StaffController extends Controller
             'requested_id'    => Auth::id(),
             'after_check_in'  => $checkIn,
             'after_check_out' => $checkOut,
-            'reason'          => $request->input('remarks'),
+            'reason'          => $request->input('reason'),
             'status'          => AttendanceEdit::STATUS_PENDING,
         ]);
 

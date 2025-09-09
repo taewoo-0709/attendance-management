@@ -17,7 +17,6 @@ class AttendanceEdit extends Model
         'requested_id',
         'after_check_in',
         'after_check_out',
-        'approved_id',
         'reason',
         'status',
     ];
