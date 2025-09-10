@@ -89,7 +89,7 @@ class AdminController extends Controller
         $attendance->update([
             'check_in_time'  => $request->input('check_in_time'),
             'check_out_time' => $request->input('check_out_time'),
-            'reason'         => $request->input('remarks'),
+            'reason'         => $request->input('reason'),
         ]);
 
         $attendance->breaks()->delete();
@@ -118,7 +118,7 @@ class AdminController extends Controller
                 'work_date'     => $request->input('work_date'),
                 'check_in_time' => $request->input('check_in_time'),
                 'check_out_time'=> $request->input('check_out_time'),
-                'reason'        => $request->input('remarks'),
+                'reason'        => $request->input('reason'),
             ]);
 
             if ($request->has('breaks')) {

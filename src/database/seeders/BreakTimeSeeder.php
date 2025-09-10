@@ -17,7 +17,6 @@ class BreakTimeSeeder extends Seeder
      */
     public function run()
     {
-
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         BreakTime::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
@@ -38,25 +37,50 @@ class BreakTimeSeeder extends Seeder
                 continue;
             }
 
-            BreakTime::create([
-                'attendance_id'   => $attendance->id,
-                'break_start_time'=> $attendance->work_date->copy()->setTime(12, 0),
-                'break_end_time'  => $attendance->work_date->copy()->setTime(13, 0),
-            ]);
+            $allBreaks = [];
 
-            $extraBreaks = rand(0, 2);
+            $firstBreakStart = $checkIn->copy()->addHours(4)->setMinutes(0);
+            $firstBreakEnd   = $firstBreakStart->copy()->addMinutes(60);
+            $allBreaks[] = ['start' => $firstBreakStart, 'end' => $firstBreakEnd];
+
+            $extraBreaks = rand(0, 3);
 
             for ($i = 0; $i < $extraBreaks; $i++) {
-                $extraStart = $checkIn->copy()->addHours(rand(2, $workDuration - 2))->setMinutes(rand(0, 59));
-                $extraEnd   = $extraStart->copy()->addMinutes(rand(10, 20));
+                $tries = 0;
 
-                if ($extraEnd->lt($checkOut)) {
-                    BreakTime::create([
-                        'attendance_id'   => $attendance->id,
-                        'break_start_time'=> $extraStart,
-                        'break_end_time'  => $extraEnd,
-                    ]);
-                }
+                do {
+                    $tries++;
+
+                    $extraStart = $checkIn->copy()->addHours(rand(1, $workDuration - 1))
+                        ->setMinutes(rand(0, 59));
+                    $extraEnd   = $extraStart->copy()->addMinutes(rand(10, 30));
+
+                    if ($extraEnd->gt($checkOut)) continue;
+
+                    $overlap = false;
+                    foreach ($allBreaks as $b) {
+                        if ($extraStart->lt($b['end']) && $extraEnd->gt($b['start'])) {
+                            $overlap = true;
+                            break;
+                        }
+                    }
+
+                    if (!$overlap) {
+                        $allBreaks[] = ['start' => $extraStart, 'end' => $extraEnd];
+                        break;
+                    }
+
+                } while ($tries < 10);
+            }
+
+            usort($allBreaks, fn($a, $b) => $a['start']->timestamp <=> $b['start']->timestamp);
+
+            foreach ($allBreaks as $b) {
+                BreakTime::create([
+                    'attendance_id'   => $attendance->id,
+                    'break_start_time'=> $b['start'],
+                    'break_end_time'  => $b['end'],
+                ]);
             }
         }
     }

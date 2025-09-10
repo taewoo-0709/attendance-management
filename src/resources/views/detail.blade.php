@@ -83,7 +83,7 @@
             <span class="date-space__time"></span>
             ～
             <span class="date-space__time"></span>
-            <input type="time" name="check_out_time" value="{{ $displayCheckOut ?? '' }}">
+            <input type="time" name="check_out_time" value="{{ $displayCheckOut ?? '' }}"><br>
           @if($errors->has('check_in_time') || $errors->has('check_out_time'))
             <p class="detail-form__error-message">
               {{ $errors->first('check_in_time') ?: $errors->first('check_out_time') }}
