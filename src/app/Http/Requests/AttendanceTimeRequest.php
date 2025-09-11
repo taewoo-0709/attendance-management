@@ -25,10 +25,10 @@ class AttendanceTimeRequest extends FormRequest
     public function rules()
     {
         return [
-            'check_in_time'   => 'required|regex:/^\d{2}:\d{2}$/|before:check_out_time',
-            'check_out_time'  => 'required|regex:/^\d{2}:\d{2}$/|after:check_in_time',
-            'breaks.*.start'  => 'nullable|regex:/^\d{2}:\d{2}$/',
-            'breaks.*.end'    => 'nullable|regex:/^\d{2}:\d{2}$/',
+            'check_in_time'   => 'required|regex:/^\d{2}:\d{2}$/|date_format:H:i|before:check_out_time',
+            'check_out_time'  => 'required|regex:/^\d{2}:\d{2}$/|date_format:H:i|after:check_in_time',
+            'breaks.*.start'  => 'nullable|regex:/^\d{2}:\d{2}$/|date_format:H:i',
+            'breaks.*.end'    => 'nullable|regex:/^\d{2}:\d{2}$/|date_format:H:i',
             'reason'         => 'required|string|max:20',
         ];
     }
@@ -61,10 +61,16 @@ class AttendanceTimeRequest extends FormRequest
         $validator->after(function ($validator) {
             $checkIn  = $this->input('check_in_time');
             $checkOut = $this->input('check_out_time');
-            $breaks   = $this->input('breaks', []);
 
+            if ($checkIn === '00:00') {
+                $validator->errors()->add('check_in_time', '出勤時間もしくは退勤時間が不適切な値です。');
+            }
+            if ($checkOut === '00:00') {
+                $validator->errors()->add('check_out_time', '出勤時間もしくは退勤時間が不適切な値です。');
+            }
+
+            $breaks = $this->input('breaks', []);
             $breakTimes = [];
-
             foreach ($breaks as $i => $break) {
                 $start = $break['start'] ?? null;
                 $end   = $break['end'] ?? null;

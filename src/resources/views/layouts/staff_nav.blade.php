@@ -24,7 +24,7 @@
       </form>
     </li>
     @else
-      @if($isCheckedOut)
+      @if($isCheckedOut ?? false)
         <li>
           <a class="header-nav__attendance-list" href="/attendance/list">今月の出勤一覧</a>
         </li>
