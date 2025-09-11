@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Carbon\Carbon;
 
 class AttendanceTimeRequest extends FormRequest
 {
@@ -24,9 +25,10 @@ class AttendanceTimeRequest extends FormRequest
     public function rules()
     {
         return [
-            'check_in_time'   => 'required|date_format:H:i|before:check_out_time',
-            'check_out_time'  => 'required|date_format:H:i|after:check_in_time',
-            'breaks.$i'  => 'nullable|date_format:H:i',
+            'check_in_time'   => 'required|regex:/^\d{2}:\d{2}$/|before:check_out_time',
+            'check_out_time'  => 'required|regex:/^\d{2}:\d{2}$/|after:check_in_time',
+            'breaks.*.start'  => 'nullable|regex:/^\d{2}:\d{2}$/',
+            'breaks.*.end'    => 'nullable|regex:/^\d{2}:\d{2}$/',
             'reason'         => 'required|string|max:20',
         ];
     }
@@ -35,13 +37,18 @@ class AttendanceTimeRequest extends FormRequest
     {
         return [
             'check_in_time.required' => '出勤時間を入力してください。',
-            'check_in_time.date_format' => '出勤時間はH:i形式で入力してください。',
+            'check_in_time.regex' => '時間は「HH:MM」形式で入力してください。',
+            'check_in_time.date_format' => '正しい時間を入力してください。',
             'check_in_time.before'      => '出勤時間もしくは退勤時間が不適切な値です。',
             'check_out_time.required' => '退勤時間を入力してください。',
-            'check_out_time.date_format'=> '退勤時間はH:i形式で入力してください。',
+            'check_out_time.regex' => '時間は「HH:MM」形式で入力してください。',
+            'check_out_time.date_format' => '正しい時間を入力してください。',
             'check_out_time.after'      => '出勤時間もしくは退勤時間が不適切な値です。',
 
-            'breaks.$i.date_format'=> '休憩時間はH:i形式で入力してください。',
+            'breaks.*.start.regex' => '時間は「HH:MM」形式で入力してください。',
+            'breaks.*.start.date_format' => '正しい時間を入力してください。',
+            'breaks.*.end.regex'  => '時間は「HH:MM」形式で入力してください。',
+            'breaks.*.end.date_format'  => '正しい時間を入力してください。',
 
             'reason.required' => '備考を記入してください。',
             'reason.string'   => '備考は文字列で入力してください。',

@@ -10,8 +10,8 @@
 </head>
 
 <body>
-  <div class="app">
-    <header class="header">
+  <div class="header">
+    <header class="header__logo">
       <img src="{{ asset('images/logo.svg') }}" alt="ヘッダーロゴ">
       @yield('link')
     </header>

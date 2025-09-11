@@ -10,20 +10,21 @@
     {{ session('code_error') }}
   </div>
 @endif
+
 <div class="verify-form">
   <p class="verify-form-guide">
     認証メールから認証コードを確認して入力してください。
   </p>
 
   <form action="{{ route('verification.code.submit') }}" method="POST" id="codeForm">
-  @csrf
+    @csrf
     <div class="code-input-wrapper">
       @for ($i=0; $i<4; $i++)
         <input type="text" maxlength="1" class="code-input" name="code[]">
       @endfor
     </div>
 
-    <button class="verify-resubmit" type="submit">
+    <button class="verify-submit" type="submit">
       認証する
     </button>
   </form>

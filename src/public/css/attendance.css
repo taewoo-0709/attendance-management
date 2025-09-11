@@ -98,9 +98,3 @@ body {
   color: #000000;
   letter-spacing: 2px;
 }
-
-@media (min-width: 1400px) and (max-width: 1540px), (min-width: 768px) and (max-width: 850px) {
-  .mail-form {
-    max-width: 600px;
-  }
-}

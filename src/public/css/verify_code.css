@@ -1,8 +1,8 @@
 .alert-message {
     padding: 10px 30px;
-    border-color: #ff949482;
-    background-color: #ff949482;
-    color: #FF5555;
+    border-color: #ccc;
+    background-color: #ccc;
+    color: #000000;
 }
 
 .verify-form {
@@ -40,7 +40,7 @@
   border-radius: 4px;
 }
 
-.verify-resubmit {
+.verify-submit {
   margin: 80px auto 0;
   display: block;
   width: 50%;
@@ -50,10 +50,4 @@
   border: none;
   border-radius: 4px;
   font-weight: bold;
-}
-
-@media (min-width: 1400px) and (max-width: 1540px), (min-width: 768px) and (max-width: 850px) {
-  .verify-form {
-    max-width: 600px;
-  }
 }

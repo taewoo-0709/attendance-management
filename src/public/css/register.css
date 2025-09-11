@@ -66,28 +66,26 @@
 
 @media screen and (min-width: 1400px) and (max-width: 1540px) {
   .register-form__form {
-    width: 50vw;
+    width: 90%;
     max-width: 600px;
-    padding: 64px 96px;
+    padding: 32px 96px;
   }
 }
 
 
 @media screen and (min-width: 851px) and (max-width: 1399px) {
   .register-form__form {
-    width: 40vw;
-    padding: 56px 72px;
+    width: 90%;
+    max-width: 550px;
+    padding: 32px 72px;
   }
 }
 
 @media screen and (min-width: 768px) and (max-width: 850px) {
   .register-form__form {
-    width: 60vw;
-    padding: 48px 64px;
-  }
-
-  .register-form__input {
-    width: 100%;
+    width: 90%;
+    max-width: 500px;
+    padding: 32px 64px;
   }
 
   .register-form__link {
@@ -99,7 +97,8 @@
 
 @media screen and (max-width: 767px) {
   .register-form__form {
-    width: 55vw;
+    width: 90%;
+    max-width: 400px;
     padding: 32px 16px;
   }
 

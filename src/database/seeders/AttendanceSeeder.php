@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Attendance;
-use App\Models\BreakTime;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +35,7 @@ class AttendanceSeeder extends Seeder
 
         foreach ($users as $user) {
             $date = $startDate->copy();
-            for (; $date->lte($today); $date->addDay()) {
+            for ($d = $startDate->copy(); $d->lte($today); $d->addDay()) {
 
                 if ($date->toDateString() == $today->toDateString()) {
                     continue;

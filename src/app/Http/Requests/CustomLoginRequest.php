@@ -43,7 +43,7 @@ class CustomLoginRequest extends FortifyLoginRequest
             }
 
             if (!Hash::check($this->password, $user->password)) {
-            $validator->errors()->add('password', 'パスワードが正しくありません。');
+                $validator->errors()->add('password', 'パスワードが正しくありません。');
             }
         });
     }

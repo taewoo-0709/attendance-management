@@ -15,7 +15,7 @@
     <li>
       <form class="header-nav__logout" action="{{ route('logout') }}" method="post">
         @csrf
-          <button class="header-nav__button">ログアウト</button>
+        <button class="header-nav__button">ログアウト</button>
       </form>
     </li>
   </ul>

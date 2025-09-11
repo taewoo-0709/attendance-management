@@ -7,42 +7,34 @@
 @section('content')
 <div class="attendance-date">
   <div class="attendance-date__title">
-    @if(auth()->user()->is_admin)
-      <h2 class="title">{{ $targetUser->name }}さんの勤怠</h2>
-    @else
-      <h2 class="title">勤怠一覧</h2>
-    @endif
+    <h2 class="title">
+      @if(auth()->user()->is_admin)
+        {{ $targetUser->name }}さんの勤怠
+      @else
+        勤怠一覧
+      @endif
+    </h2>
   </div>
 
   <div class="attendance-date__content">
     <div class="attendance-table__date">
-      @if(auth()->user()->is_admin)
-        <a href="{{ route('admin.attendance.staff', ['id' => $targetUser->id, 'date' => $prevDate]) }}">
-          <img class="left" src="{{ asset('images/point_icon.svg') }}" alt="左矢印">
-          前月
-        </a>
-        <form method="GET" action="{{ route('admin.attendance.staff', ['id' => $targetUser->id]) }}">
-          <img class="calender" src="{{ asset('images/calendar_icon.png') }}" alt="カレンダー">
-          <input class="date-select" type="month" name="date" value="{{ $month }}" onchange="this.form.submit()">
-        </form>
-        <a href="{{ route('admin.attendance.staff', ['id' => $targetUser->id, 'date' => $nextDate]) }}">
-          翌月
-          <img class="right" src="{{ asset('images/point_icon.svg') }}" alt="右矢印">
-        </a>
-      @else
-        <a href="{{ route('attendance.list', ['date' => $prevDate]) }}">
-          <img class="left" src="{{ asset('images/point_icon.svg') }}" alt="左矢印">
-          前月
-        </a>
-        <form method="GET" action="{{ route('attendance.list') }}">
-          <img class="calender" src="{{ asset('images/calendar_icon.png') }}" alt="カレンダー">
-          <input class="date-select" type="month" name="date" value="{{ $month }}" onchange="this.form.submit()">
-        </form>
-        <a href="{{ route('attendance.list', ['date' => $nextDate]) }}">
-          翌月
-          <img class="right" src="{{ asset('images/point_icon.svg') }}" alt="右矢印">
-        </a>
-      @endif
+      @php
+        $baseRoute = auth()->user()->is_admin ? 'admin.attendance.staff' : 'attendance.list';
+        $routeParams = auth()->user()->is_admin ? ['id' => $targetUser->id] : [];
+      @endphp
+
+      <a href="{{ route($baseRoute, array_merge($routeParams, ['date' => $prevDate])) }}">
+        <img class="left" src="{{ asset('images/point_icon.svg') }}" alt="左矢印"> 前月
+      </a>
+
+      <form method="GET" action="{{ route($baseRoute, $routeParams) }}">
+        <img class="calender" src="{{ asset('images/calendar_icon.png') }}" alt="カレンダー">
+        <input class="date-select" type="month" name="date" value="{{ $month }}" onchange="this.form.submit()">
+      </form>
+
+      <a href="{{ route($baseRoute, array_merge($routeParams, ['date' => $nextDate])) }}">
+        翌月 <img class="right" src="{{ asset('images/point_icon.svg') }}" alt="右矢印">
+      </a>
     </div>
 
     <div class="attendance-table__items">
@@ -67,36 +59,31 @@
               <td>{{ $att?->total_break_time ?? '' }}</td>
               <td>{{ $att?->actual_work_time ?? '' }}</td>
               <td>
-                @if(auth()->user()->is_admin)
-                  <a href="{{ route('admin.attendance.edit', [
+                @php
+                  $detailRoute = auth()->user()->is_admin
+                    ? 'admin.attendance.edit'
+                    : 'attendance.detail';
+                  $params = [
                     'id' => $att?->id ?? 0,
                     'user_id' => $targetUser->id,
                     'date' => $day['date']
-                  ]) }}">
-                    詳細
-                  </a>
-                @else
-                  <a href="{{ route('attendance.detail', [
-                    'id' => $att?->id ?? 0,
-                    'user_id' => $targetUser->id,
-                    'date' => $day['date']
-                  ]) }}">
-                    詳細
-                  </a>
-                @endif
+                  ];
+                @endphp
+                <a href="{{ route($detailRoute, $params) }}">詳細</a>
               </td>
             </tr>
-        @endforeach
+          @endforeach
         </tbody>
       </table>
     </div>
-    <div class="attendance-export">
-      @if(auth()->user()->is_admin)
+
+    @if(auth()->user()->is_admin)
+      <div class="attendance-export">
         <a href="{{ route('admin.attendance.csv', ['id' => $targetUser->id, 'date' => $month]) }}" class="btn btn-primary">
           CSV出力
         </a>
-      @endif
-    </div>
+      </div>
+    @endif
   </div>
 </div>
 @endsection

@@ -34,6 +34,6 @@ class AttendanceEdit extends Model
 
     public function editBreaks()
     {
-    return $this->hasMany(AttendanceEditBreak::class);
+        return $this->hasMany(AttendanceEditBreak::class);
     }
 }

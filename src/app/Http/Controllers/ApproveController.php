@@ -33,9 +33,8 @@ class ApproveController extends Controller
     ->get();
 
 
-    // 申請を承認済みに
     $edit->update([
-        'status' => AttendanceEdit::STATUS_APPROVED, // 1
+        'status' => AttendanceEdit::STATUS_APPROVED,
         'approved_id' => auth()->id(),
     ]);
 });

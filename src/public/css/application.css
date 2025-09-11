@@ -87,3 +87,22 @@ body {
   padding: 20px;
   color: #999;
 }
+
+@media screen and (max-width: 767px) {
+  .application-tabs {
+    flex-wrap: wrap;
+    padding-left: 10px;
+    margin-bottom: 10px;
+  }
+
+  .application-tab-item {
+    margin-right: 20px;
+  }
+
+  .application-table th,
+  .application-table td {
+    padding: 8px 10px;
+    font-size: 14px;
+    max-width: 120px;
+  }
+}

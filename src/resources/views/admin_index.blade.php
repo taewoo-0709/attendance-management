@@ -19,6 +19,7 @@
       </form>
       <a href="{{ route('admin.attendance.list', ['date' => $nextDate]) }}">翌日 <img class="right" src="{{ asset('images/point_icon.svg') }}" alt="右矢印"></a>
     </div>
+
     <div class="attendance-table__items">
       <table>
         <thead>
@@ -44,14 +45,14 @@
                 'id' => $attendance->id ?? 0,
                 'user_id' => $attendance->user->id,
                 'date' => $date
-              ]) }}">詳細</a>
+              ]) }}">詳細
+              </a>
             </td>
           </tr>
           @endforeach
         </tbody>
       </table>
     </div>
-  </div>
   </div>
 </div>
 @endsection

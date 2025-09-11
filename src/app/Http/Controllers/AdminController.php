@@ -6,7 +6,6 @@ use App\Models\Attendance;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\AttendanceEdit;
-use App\Models\BreakTime;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\AttendanceTimeRequest;
 use Carbon\Carbon;
@@ -86,25 +85,25 @@ class AdminController extends Controller
         DB::transaction(function () use ($request, $id) {
             $attendance = Attendance::with('breaks')->findOrFail($id);
 
-        $attendance->update([
-            'check_in_time'  => $request->input('check_in_time'),
-            'check_out_time' => $request->input('check_out_time'),
-            'reason'         => $request->input('reason'),
-        ]);
+            $attendance->update([
+                'check_in_time'  => $request->input('check_in_time'),
+                'check_out_time' => $request->input('check_out_time'),
+                'reason'         => $request->input('reason'),
+            ]);
 
-        $attendance->breaks()->delete();
+            $attendance->breaks()->delete();
 
-        if ($request->has('breaks')) {
-            foreach ($request->input('breaks') as $break) {
-                if (!empty($break['start']) && !empty($break['end'])) {
-                    $attendance->breaks()->create([
-                        'break_start_time' => $break['start'],
-                        'break_end_time'   => $break['end'],
-                    ]);
+            if ($request->has('breaks')) {
+                foreach ($request->input('breaks') as $break) {
+                    if (!empty($break['start']) && !empty($break['end'])) {
+                        $attendance->breaks()->create([
+                            'break_start_time' => $break['start'],
+                            'break_end_time'   => $break['end'],
+                        ]);
+                    }
                 }
             }
-        }
-    });
+        });
         return redirect()->route('admin.attendance.update', $id)
             ->with('success', '勤怠データを更新しました。');
     }

@@ -22,10 +22,17 @@
           <td>{{ $staff->name }}</td>
           <td>{{ $staff->email }}</td>
           <td>
-            <a class="staff-detail-link" href="{{ $isAdmin
-              ? route('admin.attendance.staff', ['id' => $staff->id, 'date' => $staff->work_date])
-              : route('attendance.detail', ['id' => $staff->id, 'date' => $staff->work_date]) }}">
-                詳細
+            @php
+              $detailRoute = $isAdmin
+                ? 'admin.attendance.staff'
+                : 'attendance.detail';
+              $params = [
+                'id' => $staff->id,
+                'date' => $staff->work_date
+              ];
+            @endphp
+            <a class="staff-detail-link" href="{{ route($detailRoute, $params) }}">
+              詳細
             </a>
           </td>
         </tr>

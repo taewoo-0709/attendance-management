@@ -6,9 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use App\Models\User;
 use App\Models\AttendanceEdit;
-use App\Models\AttendanceEditBreak;
 use App\Http\Requests\AttendanceTimeRequest;
 
 class StaffController extends Controller
@@ -148,11 +146,11 @@ class StaffController extends Controller
             ->where('status', AttendanceEdit::STATUS_PENDING)
             ->where('attendance_id', $attendanceId);
 
-            if (!auth()->user()->is_admin) {
-                $pendingEditQuery->where('requested_id', Auth::id());
-            }
+        if (!auth()->user()->is_admin) {
+            $pendingEditQuery->where('requested_id', Auth::id());
+        }
 
-            $pendingEdit = $pendingEditQuery->latest('created_at')->first();
+        $pendingEdit = $pendingEditQuery->latest('created_at')->first();
 
         return view('detail', compact('attendance', 'layout', 'date', 'isDetailPage', 'pendingEdit'));
     }
