@@ -92,11 +92,6 @@
         $breakStart = old("breaks.$i.start", $break ? (\Carbon\Carbon::parse($break->after_break_start_time ?? $break->break_start_time)->format('H:i')) : null);
         $breakEnd   = old("breaks.$i.end", $break ? (\Carbon\Carbon::parse($break->after_break_end_time ?? $break->break_end_time)->format('H:i')) : null);
         if ($isPending && !$breakStart && !$breakEnd) continue;
-        $breakErrors = array_merge(
-            $errors->get("breaks.$i.start"),
-            $errors->get("breaks.$i.end"),
-            $errors->get("breaks.$i")
-        );
       @endphp
       <tr>
         <th>休憩{{ $i + 1 }}</th>
@@ -107,9 +102,9 @@
             <input type="time" name="breaks[{{ $i }}][start]" value="{{ $breakStart ?? '' }}">
             <span class="date-space__time"></span> ～ <span class="date-space__time"></span>
             <input type="time" name="breaks[{{ $i }}][end]" value="{{ $breakEnd ?? '' }}"><br>
-            @if ($breakErrors)
-              <p class="detail-form__error-message">{!! implode('<br>', $breakErrors) !!}</p>
-            @endif
+            @error("breaks.$i")
+              <p class="detail-form__error-message">{{ $message }}</p>
+            @enderror
           @endif
         </td>
       </tr>

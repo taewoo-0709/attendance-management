@@ -24,11 +24,22 @@ class AttendanceTimeRequest extends FormRequest
      */
     public function rules()
     {
+        $today = now()->toDateString();
+        $workDate = $this->input('work_date');
+
+        $checkInRule = ['nullable'];
+        $checkOutRule = ['nullable'];
+
+        if ($workDate && $workDate < $today) {
+            $checkInRule[] = 'required';
+            $checkOutRule[] = 'required';
+        }
+
         return [
-            'check_in_time'   => 'required|regex:/^\d{2}:\d{2}$/|date_format:H:i|before:check_out_time',
-            'check_out_time'  => 'required|regex:/^\d{2}:\d{2}$/|date_format:H:i|after:check_in_time',
-            'breaks.*.start'  => 'nullable|regex:/^\d{2}:\d{2}$/|date_format:H:i',
-            'breaks.*.end'    => 'nullable|regex:/^\d{2}:\d{2}$/|date_format:H:i',
+            'check_in_time'   => $checkInRule,
+            'check_out_time'  => $checkOutRule,
+            'breaks.*.start'  => 'nullable',
+            'breaks.*.end'    => 'nullable',
             'reason'         => 'required|string|max:20',
         ];
     }
@@ -37,19 +48,9 @@ class AttendanceTimeRequest extends FormRequest
     {
         return [
             'check_in_time.required' => '出勤時間を入力してください。',
-            'check_in_time.regex' => '時間は「HH:MM」形式で入力してください。',
-            'check_in_time.date_format' => '正しい時間を入力してください。',
             'check_in_time.before'      => '出勤時間もしくは退勤時間が不適切な値です。',
             'check_out_time.required' => '退勤時間を入力してください。',
-            'check_out_time.regex' => '時間は「HH:MM」形式で入力してください。',
-            'check_out_time.date_format' => '正しい時間を入力してください。',
             'check_out_time.after'      => '出勤時間もしくは退勤時間が不適切な値です。',
-
-            'breaks.*.start.regex' => '時間は「HH:MM」形式で入力してください。',
-            'breaks.*.start.date_format' => '正しい時間を入力してください。',
-            'breaks.*.end.regex'  => '時間は「HH:MM」形式で入力してください。',
-            'breaks.*.end.date_format'  => '正しい時間を入力してください。',
-
             'reason.required' => '備考を記入してください。',
             'reason.string'   => '備考は文字列で入力してください。',
             'reason.max'      => '備考は20文字以内で入力してください。',

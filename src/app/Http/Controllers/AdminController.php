@@ -242,22 +242,29 @@ class AdminController extends Controller
         $attendances = Attendance::where('user_id', $id)
             ->whereBetween('work_date', [$startDate, $endDate])
             ->with('breaks')
-            ->orderBy('work_date')
-            ->get();
+            ->get()
+            ->keyBy(function ($item) {
+                return $item->work_date->toDateString();
+            });
 
-        $response = new StreamedResponse(function () use ($attendances, $user, $month) {
+        $response = new StreamedResponse(function () use ($attendances, $user, $month, $startDate, $endDate) {
             $handle = fopen('php://output', 'w');
 
             fputcsv($handle, ['日付', '出勤', '退勤', '休憩', '合計']);
 
-            foreach ($attendances as $att) {
+            $current = $startDate->copy();
+            while ($current->lte($endDate)) {
+                $att = $attendances->get($current->toDateString());
+
                 fputcsv($handle, [
-                    $att->work_date->format('Y/m/d'),
-                    optional($att->check_in_time)->format('H:i'),
-                    optional($att->check_out_time)->format('H:i'),
-                    $att->total_break_time,
-                    $att->actual_work_time,
+                    $current->format('Y/m/d'),
+                    $att?->check_in_time?->format('H:i') ?? '',
+                    $att?->check_out_time?->format('H:i') ?? '',
+                    $att?->total_break_time ?? '',
+                    $att?->actual_work_time ?? '',
                 ]);
+
+                $current->addDay();
             }
 
             fclose($handle);
