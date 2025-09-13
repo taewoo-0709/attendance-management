@@ -89,10 +89,10 @@ class AttendanceTimeRequest extends FormRequest
                     $endTime   = \Carbon\Carbon::parse($end);
 
                     if ($checkIn && $startTime < \Carbon\Carbon::parse($checkIn)) {
-                        $validator->errors()->add("breaks.$i", '休憩時間が不適切な値です。');
+                        $validator->errors()->add("breaks.$i", '休憩時間もしくは出勤時間が不適切な値です。');
                     }
                     if ($checkOut && $startTime > \Carbon\Carbon::parse($checkOut)) {
-                        $validator->errors()->add("breaks.$i", '休憩時間が不適切な値です。');
+                        $validator->errors()->add("breaks.$i", '休憩時間もしくは退勤時間が不適切な値です。');
                     }
                     if ($checkOut && $endTime > \Carbon\Carbon::parse($checkOut)) {
                         $validator->errors()->add("breaks.$i", '休憩時間もしくは退勤時間が不適切な値です。');

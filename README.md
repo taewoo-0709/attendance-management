@@ -25,7 +25,8 @@ Laravel 環境構築
 
 ・ php artisan db:seed
 
-※attendances_tableのreasonはnullableですが、管理者修正時もreasonを入力必須のバリデーションを実装しています。<br>そのため、Seederや通常打刻ではreasonは不要としています。
+※attendances_tableのreasonはnullableですが、管理者修正時,reasonを入力必須のバリデーションを実装しています。<br>そのため、Seederや通常打刻ではreasonは不要としています。<br>
+同じくattendances_tableのcheck_in_timeとcheck_out_timeは、nullableですが、修正時に休憩時間のみで登録されないようバリデーションを実装しています。
 
 ### ユーザー例
 ・ 管理者
