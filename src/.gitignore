@@ -1,4 +1,4 @@
-/docker/mysql/data./
+/docker/mysql/data/
 /node_modules
 /public/hot
 /public/storage
