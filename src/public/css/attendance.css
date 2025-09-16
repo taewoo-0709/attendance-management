@@ -1,0 +1,100 @@
+body {
+  background: #f0eff2;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.alert-message {
+    padding: 10px 30px;
+    border-color: #ccc;
+    background-color: #ccc;
+    color: #000000;
+}
+
+.attendance-form {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 60px 30px;
+  text-align: center;
+  box-sizing: border-box;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.work-situation {
+  border: 1px solid #C8C8C8;
+  background-color: #C8C8C8;
+  width: 20%;
+  color: #696969;
+  font-weight: bold;
+  border-radius: 20px;
+  padding: 6px 0px;
+  margin: 0 auto;
+  margin-bottom: 15px;
+}
+
+.btn__group {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+.btn__group button {
+  flex: 1;
+  max-width: 500px;
+}
+
+.date {
+  font-size: 25px;
+  margin: 10px 0;
+}
+
+.time {
+  font-size: 60px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.btn {
+  display: inline-block;
+  font-weight: bold;
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 30px;
+  padding: 13px 55px;
+  font-size: 20px;
+  color: #fff;
+  background-color: #000000;
+  border-radius: 15px;
+  cursor: pointer;
+  border: none;
+  letter-spacing: 2px;
+}
+
+.btn-break {
+  display: inline-block;
+  font-weight: bold;
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 30px;
+  padding: 13px 40px;
+  font-size: 20px;
+  color: #000000;
+  border-color: #fff;
+  background-color: #fff;
+  border-radius: 15px;
+  cursor: pointer;
+  border: none;
+  letter-spacing: 2px;
+}
+
+.leaving-work__message {
+  font-size: 16px;
+  font-weight: bold;
+  padding-left: 20px;
+  margin-top: 50px;
+  color: #000000;
+  letter-spacing: 2px;
+}

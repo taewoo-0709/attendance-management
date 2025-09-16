@@ -1,0 +1,108 @@
+body {
+  background: #f0eff2;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.application-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.application-title {
+  padding: 8px;
+  font-size: 25px;
+  border-left: 8px solid #000;
+  margin: 50px 0;
+  font-weight: bold;
+}
+
+.application-tabs {
+  display: flex;
+  list-style: none;
+  padding-left: 30px;
+  border-bottom: 2px solid #ccc;
+  margin-bottom: 20px;
+  min-width: 640px;
+}
+
+.application-tab-item {
+  margin-right: 50px;
+}
+
+.application-tab-link {
+  display: block;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #555;
+  border: 1px solid transparent;
+}
+
+.application-tab-link.active {
+  border-bottom: none;
+  font-weight: bold;
+  color: #000;
+}
+
+.application-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  color: #737373;
+}
+
+.application-table th,
+.application-table td {
+  padding: 12px 20px;
+  text-align: center;
+  border-bottom: 2px solid #f0eff2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 150px;
+}
+
+.application-table th {
+  font-weight: bold;
+  border-bottom: 5px solid #f0eff2;
+}
+
+.application-detail-link {
+  color: #000;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.application-table tr {
+  border-bottom: none;
+  font-weight: bold;
+}
+
+.application-empty {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+}
+
+@media screen and (max-width: 767px) {
+  .application-tabs {
+    flex-wrap: wrap;
+    padding-left: 10px;
+    margin-bottom: 10px;
+  }
+
+  .application-tab-item {
+    margin-right: 20px;
+  }
+
+  .application-table th,
+  .application-table td {
+    padding: 8px 10px;
+    font-size: 14px;
+    max-width: 120px;
+  }
+}

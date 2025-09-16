@@ -1,0 +1,58 @@
+.alert-message {
+    padding: 10px 30px;
+    border-color: #ccc;
+    background-color: #ccc;
+    color: #000000;
+}
+
+.mail-form {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 60px 30px;
+  text-align: center;
+  box-sizing: border-box;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mail-form-guide {
+  font-size: 16px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.mail-form-btn {
+  font-weight: bold;
+  margin-top: 30px;
+  padding: 10px 30px;
+  font-size: 16px;
+  background-color: #e0e0e0;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mail-form-btn:hover {
+  background-color: #ccc;
+}
+
+.mail-resubmit {
+  display: inline;
+  margin-top: 50px;
+  font-size: 14px;
+  color: #007bff;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.mail-resubmit:hover {
+  text-decoration: underline;
+}
