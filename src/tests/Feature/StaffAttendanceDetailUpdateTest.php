@@ -13,17 +13,19 @@ class AttendanceDetailUpdateTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function it_shows_error_if_check_in_is_after_check_out()
+    public function it_shows_error_if_check_in_is_after_check_out_on_past_date()
     {
         $user = User::factory()->create();
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
+            'work_date' => now()->subDay()->toDateString(),
             'check_in_time' => '09:00',
             'check_out_time' => '18:00',
         ]);
 
         $this->actingAs($user)
             ->post(route('attendance.requestEdit', $attendance->id), [
+                'work_date' => $attendance->work_date,
                 'check_in_time' => '20:00',
                 'check_out_time' => '18:00',
                 'reason' => 'テスト修正',
