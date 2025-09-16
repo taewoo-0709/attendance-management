@@ -5,7 +5,7 @@
 Docker ビルド
 
 ・  git@github.com:taewoo-0709/attendance-management.git<br>
-・ dataファイルはセキュリティの観念から追跡を外しています。自作してください。<br>
+
 ・  docker-compose up -d --build
 
 ＊MySQL は、OS によって起動しない場合があるのでそれぞれの PC に合わせて docker-compose.yml ファイルを編集してください。
