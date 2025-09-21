@@ -87,7 +87,8 @@ mailhogを使用しています。<br>
 
 ## URL
 
-・開発環境：http://localhost/
+・開発環境：http://localhost/ <br>
+※ http://localhost/login か http://localhost/admin/login にアクセスしてください。
 
 ・phpMyAdmin：http://localhost:8080/
 
