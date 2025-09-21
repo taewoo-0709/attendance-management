@@ -26,7 +26,7 @@ Laravel 環境構築
 ・ php artisan db:seed
 
 ※attendances_tableのreasonはnullableですが、管理者修正時,reasonを入力必須のバリデーションを実装しています。<br>そのため、Seederや通常打刻ではreasonは不要としています。<br>
-同じくattendances_tableのcheck_in_timeとcheck_out_timeは、nullableですが、修正時に休憩時間のみで登録されないようバリデーションを実装しています。
+同じくattendances_tableのcheck_in_timeとcheck_out_timeは、nullableですが、修正時に休憩時間のみで登録されないようバリデーション実装と、当日の打刻の修正のみ出勤時間と備考のみでも可能としています（過去の出勤日は出退勤の入力必須）。
 
 ### ユーザー例
 ・ 管理者
@@ -66,10 +66,12 @@ mailhogを使用しています。<br>
 5. php artisan test<br>
 ※「Unit」ディレクトリがなければディレクトリを作成してからテスト実行してください。
 
+## テーブル仕様書
+<img width="397" height="454" alt="スクリーンショット 2025-09-21 12 44 27" src="https://github.com/user-attachments/assets/e6fc2a28-d844-4da4-b2b8-1593adf1e208" /><br>
+<img width="410" height="325" alt="スクリーンショット 2025-09-21 12 44 40" src="https://github.com/user-attachments/assets/6ecd1c57-2f22-4e47-84c1-4128fdcb3203" />
 
 ## ER図
-![alt text](<スクリーンショット 2025-09-07 11.46.20.png>)
-
+<img width="454" height="585" alt="スクリーンショット 2025-09-07 11 46 20" src="https://github.com/user-attachments/assets/a2492ac9-8c59-428c-a38e-e2309a62e606" />
 ## 使用技術 🔗
 
 ・PHP 8.1.33
