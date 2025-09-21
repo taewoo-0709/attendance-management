@@ -42,6 +42,17 @@ Laravel 環境構築
 mailhogを使用しています。<br>
 メール認証誘導画面の、「認証はこちら」ボタンから認証画面に遷移するため、mailhogにアクセスし、届いているメールから認証コードを確認して認証画面にコードを入力して認証完了してください。
 
+## テーブル仕様書
+<img width="397" height="454" alt="スクリーンショット 2025-09-21 12 44 27" src="https://github.com/user-attachments/assets/e6fc2a28-d844-4da4-b2b8-1593adf1e208" /><br>
+<img width="410" height="325" alt="スクリーンショット 2025-09-21 12 44 40" src="https://github.com/user-attachments/assets/6ecd1c57-2f22-4e47-84c1-4128fdcb3203" /><br>
+
+※ログイン機能のバリデーションに関して、それぞれの権限以外でのログインがなされた際にバリデーションがかかるよう、一部Controllerで実装している箇所があります。<br>
+
+※attendances_tableのreasonはnullableですが、管理者修正時,reasonを入力必須のバリデーションを実装しています。<br>そのため、Seederや通常打刻ではreasonは不要としています。<br>
+同じくattendances_tableのcheck_in_timeとcheck_out_timeは、nullableですが、修正時に休憩時間のみで登録されないようバリデーション実装と、当日の打刻の修正のみ出勤時間と備考のみでも可能としています（過去の出勤日は出退勤の入力必須）。<br>
+
+※申請承認済みのデータに関しては、再度申請が行える様になっています。
+
 ## テスト実施
 ### テスト用データベースの作成・コマンド
 1. MySQLコンテナで、「demo_test」というDBを作成。<br>
@@ -62,17 +73,6 @@ mailhogを使用しています。<br>
 4. php artisan migrate --env=testing
 5. php artisan test<br>
 ※「Unit」ディレクトリがなければディレクトリを作成してからテスト実行してください。
-
-## テーブル仕様書
-<img width="397" height="454" alt="スクリーンショット 2025-09-21 12 44 27" src="https://github.com/user-attachments/assets/e6fc2a28-d844-4da4-b2b8-1593adf1e208" /><br>
-<img width="410" height="325" alt="スクリーンショット 2025-09-21 12 44 40" src="https://github.com/user-attachments/assets/6ecd1c57-2f22-4e47-84c1-4128fdcb3203" /><br>
-
-※attendances_tableのreasonはnullableですが、管理者修正時,reasonを入力必須のバリデーションを実装しています。<br>そのため、Seederや通常打刻ではreasonは不要としています。<br>
-同じくattendances_tableのcheck_in_timeとcheck_out_timeは、nullableですが、修正時に休憩時間のみで登録されないようバリデーション実装と、当日の打刻の修正のみ出勤時間と備考のみでも可能としています（過去の出勤日は出退勤の入力必須）。
-
-※申請承認済みのデータに関しては、再度申請が行える様になっています。
-
-※ログイン機能のバリデーションに関して、それぞれの権限以外でのログインがなされた際にバリデーションがかかるよう、一部Controllerで実装している箇所があります。
 
 ## ER図
 <img width="454" height="585" alt="スクリーンショット 2025-09-07 11 46 20" src="https://github.com/user-attachments/assets/a2492ac9-8c59-428c-a38e-e2309a62e606" />
